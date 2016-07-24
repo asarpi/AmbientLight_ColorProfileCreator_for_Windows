@@ -9,90 +9,110 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Runtime.InteropServices;
+using AmbientLight_ColorProfileCreator_for_Windows;
 
 namespace AmbientLight_ColorProfileCreator_for_Windows
 {
     public partial class Form1 : Form
     {
         #region variable definitions
-        //import necessary dlls
-        [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
-        public static extern int BitBlt(IntPtr hDCm, int x, int y, int nWidth, int nHeigh, IntPtr hSrcDC, int xSrc, int ySrc, int swRop);
+        
+        ColorCapture colorCapture; //create an ColorCapture object
+        public Graphics graphics; //grapichs object for drawing
+        public static Rectangle rectangle = new Rectangle(50, 50, 150, 150);
+        public static Rectangle rectangle2 = new Rectangle(250, 50, 150, 150);
 
-        [DllImport("user32.dll")]
-        static extern bool GetCursorPos(ref Point lpPoint);
+        static SolidBrush myBrush = new SolidBrush(Color.Red);
+        static SolidBrush myBrush2 = new SolidBrush(Color.Red);
+        Thread thread_fillingColorBox;
 
-        Thread t;
-        int x, y;
-        Graphics graphics;
-        Rectangle rectangle = new Rectangle(50, 50, 150, 150);
-
-        Point cursor = new Point();
+        private int click_counter = 0;
+     
 
         #endregion
         public Form1()
         {
             InitializeComponent();
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            /* init */
-            t = new Thread(catchPixelColorFromScreen);
-            t.Start();
-            DrawIt();
-            //Environment.Exit(Environment.ExitCode);
+            logger.begin();
+
+            graphics = this.CreateGraphics();
+            colorCapture = new ColorCapture();
+            thread_fillingColorBox = new Thread(fillingColorBox); //initialization of thread
+            
+            //thread_fillingColorBox.Start();
+            //while (!thread_fillingColorBox.IsAlive) ;
+            //thread_fillingColorBox.Join();
+            //ThreadPool.QueueUserWorkItem(fillingColorBox, 1);
+
         }
 
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             //close everything from this app
+            Console.WriteLine("muhaha");
+            
+            logger.close();
             Environment.Exit(Environment.ExitCode);
-        }
-        private void DrawIt()
-        {
-            graphics = this.CreateGraphics();
-            Rectangle rectangle = new Rectangle(50, 50, 150, 150);
-            graphics.DrawRectangle(Pens.Red, rectangle);
-
+            //thread_fillingColorBox.Abort();
         }
 
-        private void catchPixelColorFromScreen()
+        /// <summary>
+        /// Handler of button1 clicking events.
+        /// If you click the button, fillingColorBox thread will be started. If you click again, it will be stopped.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
         {
-            //create a bitmap (which consists of the pixel data for a graphios image and its attrubtes)
-            Bitmap screenCopy = new Bitmap(1, 1); //initialize bitmap with specified size (int32, int32) --> this contains one pixel
-            using (Graphics gdest = Graphics.FromImage(screenCopy)) //create a Graphics (IDisposable) object with "screenCopy" bitmap
-                                                                    //because it is provide a mechanism for releasing unmanaged resources after using, therefore it is very memory-friendly
+            click_counter++;
+            if (click_counter % 2 == 1)
             {
-                while (true)
+                if (thread_fillingColorBox.ThreadState != ThreadState.Running)
                 {
-                    using (Graphics gsrc = Graphics.FromHwnd(IntPtr.Zero))
-                    {
-                        GetCursorPos(ref cursor);
-                        int x = cursor.X;
-                        int y = cursor.Y;
-                        IntPtr hSrcDC = gsrc.GetHdc(); //gets the handle to device, which associated with this Graphics object
-                        IntPtr hDC = gdest.GetHdc();
-                        int retval = BitBlt(hDC, 0, 0, 1, 1, hSrcDC, x, y, (int)CopyPixelOperation.SourceCopy); //fastest way for access screen that Windows show
-                        //TODO: this method may won't working on GPU-accekerated content --> we will get a black image from videos, games etc.
-                        //but it's working on my PC :-)
-                        gdest.ReleaseHdc();
-                        gsrc.ReleaseHdc();   
-                    }
-                    Color c = Color.FromArgb(screenCopy.GetPixel(0, 0).ToArgb()); //convert captured pixel to Color object
-                    //if you close the app, kick off the thread, which gives color value, therefore we needs for this try/catch mechanism for catching exception
-                    try
-                    {
-                        graphics.FillRectangle(new SolidBrush(c), rectangle);
-                    }
-                    catch (System.Runtime.InteropServices.ExternalException e)
-                    {
-                        //close the app and everything in it
-                        Console.WriteLine("exit with exception: System.Runtime.InteropServices.ExternalException during drawing colored rectangle");
-                        Environment.Exit(Environment.ExitCode);
-                    }
+                    //start  
+                    
+                    thread_fillingColorBox.Start();
                 }
             }
+            else
+            {
+                //Stop
+                if (thread_fillingColorBox.ThreadState == ThreadState.Running)
+                {
+                    thread_fillingColorBox.Abort();
+                }
+                
+            }
+        }
+        
+
+        /// <summary>
+        /// Main function of thread_fillingColorBox.
+        /// Get calculated color from colorCapture and draw a rectangle and fill it with this color.
+        /// </summary>
+        private void fillingColorBox(object stateInformation)
+        {
+            while (true)
+            {
+                myBrush = colorCapture.getColor();
+                myBrush2 = colorCapture.getColor2();
+                try {
+                    graphics.FillRectangle(myBrush, rectangle);
+                    graphics.FillRectangle(myBrush2, rectangle2);
+                }
+                catch (System.Runtime.InteropServices.ExternalException e)
+                {
+                    Console.WriteLine("[catched exception] exit with excepction while drawing colored rectangle");
+                    Environment.Exit(Environment.ExitCode);
+                }
+                Thread.Sleep(10);
+            }
+
         }
     }
 }
