@@ -10,7 +10,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     public enum LogTypes
     {
         NoType = 0,
-        ColorCapturing = 1
+        ColorCapturing = 1,
+        CatchedException = 2,
+
 
     }
     public static class logger
@@ -26,7 +28,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         public static void close()
         {
-            
+            Logger.Add("");
+            Logger.Add("");
+            Logger.Add("");
             Logger.Add("######## LOG END ##########");
             Logger.Add(DateTime.Now.ToString());
             File.WriteAllLines("log.txt", Logger);

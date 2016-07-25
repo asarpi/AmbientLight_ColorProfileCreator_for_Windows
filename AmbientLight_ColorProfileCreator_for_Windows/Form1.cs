@@ -19,11 +19,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         
         ColorCapture colorCapture; //create an ColorCapture object
         public Graphics graphics; //grapichs object for drawing
-        public static Rectangle rectangle = new Rectangle(50, 50, 150, 150);
-        public static Rectangle rectangle2 = new Rectangle(250, 50, 150, 150);
 
-        static SolidBrush myBrush = new SolidBrush(Color.Red);
-        static SolidBrush myBrush2 = new SolidBrush(Color.Red);
+
         Thread thread_fillingColorBox;
 
         private int click_counter = 0;
@@ -53,8 +50,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //close everything from this app
-            Console.WriteLine("muhaha");
+            //close everything from this app and save logger to file
             
             logger.close();
             Environment.Exit(Environment.ExitCode);
@@ -89,7 +85,15 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 
             }
         }
-        
+
+        public static Rectangle rectangle; // = new Rectangle(50, 50, 150, 150);
+        static SolidBrush myBrush; // = new SolidBrush(Color.Red);
+        private int[] number_of_rectangles;
+        Color[] colors_of_rectangles;
+        int rect_x = 50;
+        int rect_y = 50;
+        int rect_width = 50;
+        int rect_height = 50;
 
         /// <summary>
         /// Main function of thread_fillingColorBox.
@@ -99,6 +103,37 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             while (true)
             {
+                number_of_rectangles = colorCapture.getResolution();
+                colors_of_rectangles = colorCapture.getColor();
+                rectangle = new Rectangle(50, 50, 150, 150);
+                foreach (Color c in colors_of_rectangles)
+                {
+                    for (int id_rect_vertical = 0; id_rect_vertical < number_of_rectangles[0]; id_rect_vertical++)
+                    {
+                        for (int id_rect_horizontal = 0; id_rect_horizontal < number_of_rectangles[1]; id_rect_horizontal++)
+                        {
+                            rectangle = new Rectangle(rect_x + (id_rect_horizontal * rect_width)+5,
+                                                      rect_y + (id_rect_vertical * rect_height)+5,
+                                                      rect_width,
+                                                      rect_height);
+                            myBrush = new SolidBrush(colors_of_rectangles[id_rect_vertical * number_of_rectangles[1] + id_rect_horizontal ]);
+                            //myBrush = new SolidBrush(Color.Black);
+                            //try
+                            //{
+                                graphics.FillRectangle(myBrush, rectangle);
+                            /*}
+                            catch (System.Runtime.InteropServices.ExternalException e)
+                            {
+                                Console.WriteLine("[catched exception] exit with excepction while drawing colored rectangle");
+                                logger.add(LogTypes.CatchedException, "exit with excepction while drawing colored rectangle");
+                                Environment.Exit(Environment.ExitCode);
+                            }
+                            */
+
+                        }
+                    }
+                }
+                /*
                 myBrush = colorCapture.getColor();
                 myBrush2 = colorCapture.getColor2();
                 try {
@@ -109,8 +144,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 {
                     Console.WriteLine("[catched exception] exit with excepction while drawing colored rectangle");
                     Environment.Exit(Environment.ExitCode);
-                }
-                Thread.Sleep(10);
+                }*/
+                //Thread.Sleep(10);
             }
 
         }
