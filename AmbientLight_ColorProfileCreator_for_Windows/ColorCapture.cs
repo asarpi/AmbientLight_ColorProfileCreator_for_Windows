@@ -17,7 +17,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     {
         #region variable definitions
 
-        /**** Exterbak DLL imports for capture pixels and mouse position ****/ 
+        /**** Exterbak DLL imports for capture pixels and mouse position ****/
 
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
         public static extern int BitBlt(IntPtr hDCm, int x, int y, int nWidth, int nHeigh, IntPtr hSrcDC, int xSrc, int ySrc, int swRop);
@@ -32,7 +32,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         //thread definitions
         Thread thread_colorCapturing_with_mouse;
         Thread thread_colorCapturing_with_grid;
-        
+
 
 
 
@@ -62,44 +62,48 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// </summary>
         public ColorCapture()
         {
-            
-            start_capturing_with_mouse();
-            //start_capturing_with_grid();
+
+            //start_capturing_with_mouse();
+            start_capturing_with_grid();
             logger.add(LogTypes.ColorCapturing, "screenHeight: " + screenHeight);
             logger.add(LogTypes.ColorCapturing, "screenWidth: " + screenWidth);
-            setResolution(10,10);
         }
 
-
+        /// <summary>
+        /// Public get function for get array of captured colors.
+        /// Array size is vertical_resolution * horizontal_resolution
+        /// </summary>
+        /// <returns>array of captured colors</returns>
         public Color[] getColor()
         {
             Color[] colors = new Color[vertical_resoulution * horizontal_resolution];
-            for (int i = 0; i < (vertical_resoulution * horizontal_resolution); i ++)
+            for (int i = 0; i < (vertical_resoulution * horizontal_resolution); i++)
             {
-                colors[i] = Color.FromArgb(Convert.ToInt32(rgb_averages[i,0]), 
-                                            Convert.ToInt32(rgb_averages[i, 1]), 
-                                            Convert.ToInt32(rgb_averages[i, 2]));
+                colors[i] = Color.FromArgb(utils.threshold_int(rgb_averages[i, 0], 0, 255),
+                                           utils.threshold_int(rgb_averages[i, 1], 0, 255),
+                                           utils.threshold_int(rgb_averages[i, 2], 0, 255));
             }
             return colors;
-            // return new SolidBrush(captured_color);
         }
 
-
-        public SolidBrush getColor2()
-        {
-            return new SolidBrush(captured_color2);
-        }
-
+        /// <summary>
+        /// Public set function for set how many rectangles  will be capture from the screen. 
+        /// </summary>
+        /// <param name="vertical"> specifies number of rectangles in vertical direction</param>
+        /// <param name="horizontal"> specifies number of rectangles in horizontal direction</param>  
         public void setResolution(int vertical, int horizontal)
         {
             vertical_resoulution = vertical;
             horizontal_resolution = horizontal;
             logger.add(LogTypes.ColorCapturing, "set vertical resolution to " + vertical_resoulution.ToString() + " and horizontal resolution to " + horizontal_resolution.ToString());
-            pixelnum_of_slice = (screenHeight / vertical_resoulution +2 ) * (screenWidth / horizontal_resolution +2) ;
+            pixelnum_of_slice = (screenHeight / vertical_resoulution) * (screenWidth / horizontal_resolution);
 
         }
 
-
+        /// <summary>
+        /// Public get function for get how many rectangles are captured from the screen
+        /// </summary>
+        /// <returns> two elements array, first is the number of rectangles in vertical direction, second is this number in horizontal direction </returns>
         public int[] getResolution()
         {
             return new int[] { vertical_resoulution, horizontal_resolution };
@@ -107,14 +111,20 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         /**** Thread management ****/
 
-
+        /// <summary>
+        /// Method for start capture thread. The thread "output" will be the color behind mouse's cursor
+        /// </summary>
         public void start_capturing_with_mouse()
         {
+            setResolution(1, 1);
             thread_colorCapturing_with_mouse = new Thread(capture_pixel_color_with_mouse);
             thread_colorCapturing_with_mouse.Start();
             logger.add(LogTypes.ColorCapturing, "colorCapturing with mouse thread started");
-            setResolution(1, 1); 
+
         }
+        /// <summary>
+        /// Method for mouse's capture thread
+        /// </summary>
 
 
         public void stop_capturing_with_mouse()
@@ -123,16 +133,21 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             logger.add(LogTypes.ColorCapturing, "colorCapturing with mouse thread aborted");
         }
 
-
+        /// <summary>
+        /// Method for start capture thread. Its "output" will be the array of colors of specified parts of screen
+        /// </summary>
         public void start_capturing_with_grid()
         {
+            setResolution(2, 2);
             thread_colorCapturing_with_grid = new Thread(capture_pixel_color_with_full_image);
             thread_colorCapturing_with_grid.Start();
             //while (!thread_colorCapturing_with_grid.IsAlive) ;
             logger.add(LogTypes.ColorCapturing, "colorCapturing with total image started");
         }
 
-
+        /// <summary>
+        /// Method for stop all screen capturing.
+        /// </summary>
         public void stop_capturing_with_grid()
         {
             thread_colorCapturing_with_grid.Abort();
@@ -144,9 +159,13 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         /***** Capture methods ****/
 
+
+        /// <summary>
+        /// Method for capturing color of pixel which is behind the mouse
+        /// </summary>
         private void capture_pixel_color_with_mouse()
         {
-            rgb_averages = new long[1,3]; //conatiner of rgb values
+            rgb_averages = new long[1, 3]; //conatiner of rgb values
 
             //create a bitmap (which consists of the pixel data for a graphios image and its attrubtes)
             Bitmap screenCopy = new Bitmap(1, 1); //initialize bitmap with specified size (int32, int32) --> this contains one pixel
@@ -172,7 +191,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     rgb_averages[0, 0] = captured_color.R;
                     rgb_averages[0, 1] = captured_color.G;
                     rgb_averages[0, 2] = captured_color.B;
-                   
+
 
                     Thread.Sleep(100);
                 }
@@ -181,11 +200,13 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         #endregion
 
-        
 
-
-      
         #region private_capture_functions_wFullImage
+
+        /// <summary>
+        /// Method for capturing colors from all screen
+        /// </summary>
+        /// <param name="stateInformation"></param>
 
         private void capture_pixel_color_with_full_image(object stateInformation)
 
@@ -205,10 +226,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             using (Graphics gdest = Graphics.FromImage(screenCopy)) //create a Graphics (IDisposable) object with "screenCopy" bitmap
                                                                     //because it is provide a mechanism for releasing unmanaged resources after using, therefore it is very memory-friendly
             {
-                while (true)
+                while (true) //infite loop for thread
                 {
                     t_curr = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    logger.add(LogTypes.ColorCapturing,"\timage processing turnaround time: " + Convert.ToSingle(t_curr - t_last) / 1000);
+                    logger.add(LogTypes.ColorCapturing, "\timage processing turnaround time: " + Convert.ToSingle(t_curr - t_last) / 1000);
                     //Console.Write(" b1 {0}  ", Convert.ToSingle(t_curr - t_last) / 1000);
                     using (Graphics gsrc = Graphics.FromHwnd(IntPtr.Zero))
                     {
@@ -238,14 +259,15 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                             System.Drawing.Imaging.ImageLockMode.ReadOnly,
                             System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-                        stride =  srcData.Stride;  //get width of a single row of pixels in the bitmap
+                        stride = srcData.Stride;  //get width of a single row of pixels in the bitmap
                         Scan0 = srcData.Scan0; //get the first address of the firs pixel data (and this means the first scan line too)
 
                         rgb_totals = new long[vertical_resoulution * horizontal_resolution, 3]; //set total RGB values to zero
-                        
+                        long a = 0;
+
                         int limit_height = 0;
                         int limit_width = 0;
-                        long asd = 0;
+                        int asd = 0;
 
                         unsafe
                         {
@@ -253,10 +275,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                             int slicenum_prev = 0;
                             slicenum_height = 0;
                             slicenum_width = 0;
-                            int a = 0;
 
                             byte* p = (byte*)(void*)Scan0; //add the first addres of first pixel data to pointer
-                            
+
                             for (int y = 0; y < screenHeight; y++) //iterate over height coordinates
                             {
                                 limit_height = (slicenum_height + 1) * screenHeight / (vertical_resoulution); // counting slices (increase if, pixels are out of specified area of pixels
@@ -287,31 +308,37 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                                         asd = 0;
                                     }
                                     slicenum = slicenum_height * horizontal_resolution + slicenum_width;
-                                //    if ((y >= screenHeight/2) && (slicenum != slicenum_prev))
-                               //         Console.WriteLine("muhaha");
+
+                                    //    if ((y >= screenHeight/2) && (slicenum != slicenum_prev))
+                                    //         Console.WriteLine("muhaha");
                                     slicenum_prev = slicenum;
                                     asd++;
                                     for (int color = 0; color < 3; color++) //iteration over colors
                                     {
-                                        int idx = (y * stride) + x * 3 + color;
+                                        int idx = (y * stride) + x * 4 + color;
+
                                         //Console.WriteLine(slicenum.ToString() + "  " + color.ToString());
-                                        rgb_totals[slicenum, color] += p[idx];
+                                        if (color == 3)
+                                            a += p[idx];
+                                        else
+                                            rgb_totals[slicenum, color] += p[idx];
                                     }
                                 }
                             }
-                        }
-                        //Console.WriteLine(asd);
-                        screenCopy.UnlockBits(srcData);
+                        } //end of unsafe part
 
+                        screenCopy.UnlockBits(srcData); //unlock bits for enable reusing
+
+                        //number of pixels of a partial area
+                        pixelnum_of_slice = (screenHeight / vertical_resoulution) * (screenWidth / horizontal_resolution);
                         rgb_averages = new long[vertical_resoulution * horizontal_resolution, 3]; //set average RGB values to zero
-                        for (int slice = 0; slice < rgb_totals.GetLength(0); slice ++)
+                        for (int slice = 0; slice < rgb_totals.GetLength(0); slice++)
                         {
-                            rgb_averages[slice, 0] = rgb_totals[slice, 0] / pixelnum_of_slice; //average R
+                            rgb_averages[slice, 0] = rgb_totals[slice, 2] / pixelnum_of_slice; //average R
                             rgb_averages[slice, 1] = rgb_totals[slice, 1] / pixelnum_of_slice; //average G
-                            rgb_averages[slice, 2] = rgb_totals[slice, 2] / pixelnum_of_slice; //average B
+                            rgb_averages[slice, 2] = rgb_totals[slice, 0] / pixelnum_of_slice; //average B
                         }
-                        
-                        
+
                         //logger.add(LogTypes.ColorCapturing, avgR1.ToString() + "  " + avgG1.ToString() + "  " + avgB1.ToString() + "  " + avgR2.ToString() + "  " + avgG2.ToString() + "  " + avgB2.ToString());
 
                         t_curr = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -319,10 +346,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                         //Console.Write(" b3 {0}  ", Convert.ToSingle(t_curr - t_last) / 1000);
                         gdest.ReleaseHdc();
                         gsrc.ReleaseHdc();
-                    }
-                }
-            }
-        }
+                    } //end of using Graphics gsrc part
+                } //end of infinite loop
+            } //end of using Graphics gdes part
+        } //end of capturing method
         #endregion
 
     }

@@ -53,6 +53,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             //close everything from this app and save logger to file
             
             logger.close();
+            thread_fillingColorBox.Abort();
             Environment.Exit(Environment.ExitCode);
             //thread_fillingColorBox.Abort();
         }
