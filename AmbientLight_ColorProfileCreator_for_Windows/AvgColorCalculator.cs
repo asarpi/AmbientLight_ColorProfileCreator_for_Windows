@@ -13,19 +13,19 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         protected int[,] avgBaseMatrix;
         protected int[,] avgBaseMatrix_weights;
-        protected Color[] avgColor = new Color[] { Color.Black };
+        protected Color[] rawColors;
 
 
         protected abstract void createAvgBaseMatrix();
-        protected abstract void getScreenMatrix();
+        
         protected abstract void calcAvgColor();
-
-
-        public override Color[] getAvgColor()
+        protected void getScreenMatrix()
         {
-            return avgColor;
+            rawColors = getRawColors();
         }
 
+        public override abstract Color[] getAvgColor();
+        
 
 
 

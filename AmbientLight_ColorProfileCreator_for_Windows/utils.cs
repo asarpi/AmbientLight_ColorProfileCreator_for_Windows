@@ -18,4 +18,15 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             return result;
         }
     }
+
+    public class test
+    {
+        ColorAvgCalc_one_out avgColorCalculator = new ColorAvgCalc_one_out();
+        public void asdf()
+        {
+            avgColorCalculator.C
+        }
+
+       
+    }
 }

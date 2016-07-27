@@ -7,25 +7,24 @@ using System.Drawing;
 
 namespace AmbientLight_ColorProfileCreator_for_Windows
 {
-    public class ScreenInterface
+    public abstract class ScreenInterface
     {
-        private ColorCapture colorCapture;
+        protected ColorCapture colorCapture;
         private AvgColorCalculator colorCalculator;
 
         public ScreenInterface ()
         {
+            colorCapture = new ColorCapture();
 
         }
 
-        public Color getAvgColor()
+
+
+        public Color[] getRawColors()
         {
-            return Color.Black;
+            return colorCapture.getColor();
         }
-
-        public int getAvgColor()
-        {
-            return 5;
-            //return new Color[] { Color.Black, Color.Black};
-
+        public abstract Color[] getAvgColor();
+        
     }
 }

@@ -64,7 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvgColorCalculator.cs" />
-    <Compile Include="ColorCalculations_for_one_output.cs" />
+    <Compile Include="ColorAvgCalc_1_simple.cs" />
+    <Compile Include="ColorAvgCalc_one_out.cs" />
     <Compile Include="ColorCapture.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -100,7 +101,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
