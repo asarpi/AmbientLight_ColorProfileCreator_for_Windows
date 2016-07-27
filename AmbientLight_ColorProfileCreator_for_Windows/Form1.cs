@@ -118,35 +118,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                                                       rect_width,
                                                       rect_height);
                             myBrush = new SolidBrush(colors_of_rectangles[id_rect_vertical * number_of_rectangles[1] + id_rect_horizontal ]);
-                            //myBrush = new SolidBrush(Color.Black);
-                            //try
-                            //{
                                 graphics.FillRectangle(myBrush, rectangle);
-                            /*}
-                            catch (System.Runtime.InteropServices.ExternalException e)
-                            {
-                                Console.WriteLine("[catched exception] exit with excepction while drawing colored rectangle");
-                                logger.add(LogTypes.CatchedException, "exit with excepction while drawing colored rectangle");
-                                Environment.Exit(Environment.ExitCode);
-                            }
-                            */
-
+                            
                         }
                     }
                 }
-                /*
-                myBrush = colorCapture.getColor();
-                myBrush2 = colorCapture.getColor2();
-                try {
-                    graphics.FillRectangle(myBrush, rectangle);
-                    graphics.FillRectangle(myBrush2, rectangle2);
-                }
-                catch (System.Runtime.InteropServices.ExternalException e)
-                {
-                    Console.WriteLine("[catched exception] exit with excepction while drawing colored rectangle");
-                    Environment.Exit(Environment.ExitCode);
-                }*/
-                //Thread.Sleep(10);
             }
 
         }
