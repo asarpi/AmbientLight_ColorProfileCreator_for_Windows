@@ -141,7 +141,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             setResolution(2, 2);
             thread_colorCapturing_with_grid = new Thread(capture_pixel_color_with_full_image);
             thread_colorCapturing_with_grid.Start();
-            //while (!thread_colorCapturing_with_grid.IsAlive) ;
+            while (!thread_colorCapturing_with_grid.IsAlive) ;
             logger.add(LogTypes.ColorCapturing, "colorCapturing with total image started");
         }
 
@@ -229,7 +229,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 while (true) //infite loop for thread
                 {
                     t_curr = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    logger.add(LogTypes.ColorCapturing, "\timage processing turnaround time: " + Convert.ToSingle(t_curr - t_last) / 1000);
+                    t_curr = DateTime.Now.Millisecond;
+                    logger.add(LogTypes.ColorCapturing, "\timage processing turnaround time: " + (t_curr - t_last));
+                    t_last = t_curr;
                     //Console.Write(" b1 {0}  ", Convert.ToSingle(t_curr - t_last) / 1000);
                     using (Graphics gsrc = Graphics.FromHwnd(IntPtr.Zero))
                     {

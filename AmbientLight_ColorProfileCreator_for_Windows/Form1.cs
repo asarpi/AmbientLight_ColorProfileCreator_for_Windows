@@ -17,8 +17,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     {
         #region variable definitions
         
-        ColorCapture colorCapture; //create an ColorCapture object
+        //ColorCapture colorCapture; //create an ColorCapture object
         public Graphics graphics; //grapichs object for drawing
+        public ColorAvgCalc_1_simple avgCalculator;
 
 
         Thread thread_fillingColorBox;
@@ -38,8 +39,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             logger.begin();
 
             graphics = this.CreateGraphics();
-            colorCapture = new ColorCapture();
-            thread_fillingColorBox = new Thread(fillingColorBox); //initialization of thread
+            //colorCapture = new ColorCapture();
+            avgCalculator = new ColorAvgCalc_1_simple();
+            thread_fillingColorBox = new Thread(fillingOneColorBox); //initialization of thread
+            //thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of thread
+            
             
             //thread_fillingColorBox.Start();
             //while (!thread_fillingColorBox.IsAlive) ;
@@ -100,12 +104,12 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// Main function of thread_fillingColorBox.
         /// Get calculated color from colorCapture and draw a rectangle and fill it with this color.
         /// </summary>
-        private void fillingColorBox(object stateInformation)
+        private void fillingMoreColorBox(object stateInformation)
         {
             while (true)
             {
-                number_of_rectangles = colorCapture.getResolution();
-                colors_of_rectangles = colorCapture.getColor();
+                number_of_rectangles = avgCalculator.getCapturedResolution();
+                colors_of_rectangles = avgCalculator.getRawColors();
                 rectangle = new Rectangle(50, 50, 150, 150);
                 foreach (Color c in colors_of_rectangles)
                 {
@@ -123,6 +127,17 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                         }
                     }
                 }
+            }
+
+        }
+        private void fillingOneColorBox(object stateInformation)
+        {
+            while (true)
+            {
+                myBrush = new SolidBrush(avgCalculator.getAvgColor()[0]);
+                rectangle = new Rectangle(50, 50, 150, 150);
+                graphics.FillRectangle(myBrush, rectangle);
+                
             }
 
         }

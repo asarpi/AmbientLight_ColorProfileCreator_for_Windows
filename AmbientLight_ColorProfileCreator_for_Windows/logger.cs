@@ -11,7 +11,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     {
         NoType = 0,
         ColorCapturing = 1,
-        CatchedException = 2,
+        ColorAvgCalculator = 2,
+        CatchedException = 3,
 
 
     }
@@ -22,8 +23,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         public static void add(LogTypes logtype, string str)
         {
-            Logger.Add("[" + logtype.ToString() + "]  " + str);
-            //Console.WriteLine("log added");
+            string logline = "[" + logtype.ToString() + "]  " + str;
+            Logger.Add(logline);
+            //Console.WriteLine(logline);
         }
 
         public static void close()

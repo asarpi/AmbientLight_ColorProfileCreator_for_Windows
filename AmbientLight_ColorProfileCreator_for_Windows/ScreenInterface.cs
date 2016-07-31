@@ -15,6 +15,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         public ScreenInterface ()
         {
             colorCapture = new ColorCapture();
+            logger.add(LogTypes.ColorAvgCalculator, "colorCapture initialized");
 
         }
 
