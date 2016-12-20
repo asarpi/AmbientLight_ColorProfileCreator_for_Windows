@@ -21,6 +21,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         public Graphics graphics; //grapichs object for drawing
         public ColorAvgCalc_1_simple avgCalculator;
 
+        //tmp
+        displayedColorValues colorBoxes;
+
+
         public int num_of_boxes_vertical = 10;
         public int num_of_boxes_horizontal = 10;
 
@@ -111,8 +115,32 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             while (true)
             {
+
+
                 number_of_rectangles = avgCalculator.getCapturedResolution();
+
+                calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];
                 colors_of_rectangles = avgCalculator.getRawColors();
+                createColorMatrix(colors_of_rectangles);
+                colorBoxes = createDisplayableBoxes(calculatedAvgColorMatrix, 50, 50, 50, 50);
+
+                for (int i = 0; i < number_of_rectangles[0]; i++)
+                {
+                    for (int j = 0; j < number_of_rectangles[1]; j++)
+                    {
+                        graphics.FillRectangle(colorBoxes.rectBrushes[i, j], colorBoxes.rects[i, j]);
+                    }
+                }
+            }
+
+            /*
+            while (true)
+            {
+                number_of_rectangles = avgCalculator.getCapturedResolution();
+
+                // INTERFACE TO CALCULATED COLORS
+                colors_of_rectangles = avgCalculator.getRawColors();
+
                 rectangle = new Rectangle(50, 50, 150, 150);
                 foreach (Color c in colors_of_rectangles)
                 {
@@ -131,8 +159,46 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     }
                 }
             }
+            */
 
         }
+
+        protected Color[,] calculatedAvgColorMatrix;
+        
+
+        public void createColorMatrix(Color[] colorArray)
+        {
+            foreach (Color c in colorArray)
+            {
+                for (int id_box_vertical = 0; id_box_vertical < number_of_rectangles[0]; id_box_vertical++)
+                {
+                    for (int id_box_horizontal = 0; id_box_horizontal < number_of_rectangles[1]; id_box_horizontal++)
+                    {
+                        calculatedAvgColorMatrix[id_box_vertical, id_box_horizontal] = colorArray[id_box_vertical * number_of_rectangles[1] + id_box_horizontal];
+                    }
+                }
+            }
+        }
+
+        public displayedColorValues createDisplayableBoxes(Color[,] colorMatrix, int pos_x, int pos_y, int width, int height)
+        {
+            displayedColorValues boxes = new displayedColorValues();
+            boxes.rects = new Rectangle[number_of_rectangles[0], number_of_rectangles[1]];
+            boxes.rectBrushes = new SolidBrush[number_of_rectangles[0], number_of_rectangles[1]];
+
+            for (int id_vert = 0; id_vert < number_of_rectangles[0]; id_vert++)
+            {
+                for (int id_hor = 0; id_hor < number_of_rectangles[1]; id_hor++)
+                {
+                    boxes.rects[id_vert, id_hor] = new Rectangle(pos_x + (id_hor * width) + 5, pos_y + (id_vert * height) + 5, width, height);
+                    boxes.rectBrushes[id_vert, id_hor] = new SolidBrush(colorMatrix[id_vert, id_hor]);
+                }
+            }
+
+            return boxes;
+        }
+
+
         private void fillingOneColorBox(object stateInformation)
         {
             while (true)
