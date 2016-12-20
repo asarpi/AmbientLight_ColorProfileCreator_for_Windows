@@ -18,9 +18,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         protected Color[] rawColors;
 
         /// <summary>
-        /// Abstract method for creatind base matrix for average calculations. Each element of matrix associated to an element of captured matrix.
+        /// Abstract method for creating base matrix for average calculations. Each element of matrix associated to an element of captured matrix.
         /// The matrix contains the weights of elements of captured matrix. 
-        /// This method must be in init section, becaouse the matrix must be completed before first calculation runs.
+        /// This method must be in init section, becaouse the matrix must be created before first calculation runs.
         /// </summary>
         protected abstract void createAvgBaseMatrix();
         
@@ -49,7 +49,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// <summary>
         /// init function
         /// </summary>
-        public AvgColorCalculator()
+        public AvgColorCalculator(int res_vertical, int res_horizontal) : base(res_vertical, res_horizontal)
         {
             getCapturedResolution();
             createAvgBaseMatrix();

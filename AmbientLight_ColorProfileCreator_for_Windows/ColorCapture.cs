@@ -60,11 +60,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// <summary>
         /// Init function
         /// </summary>
-        public ColorCapture()
+        public ColorCapture(int resolution_vertical, int resolution_horizontal)
         {
 
             //start_capturing_with_mouse();
-            start_capturing_with_grid();
+            start_capturing_with_grid(resolution_vertical, resolution_horizontal);
             logger.add(LogTypes.ColorCapturing, "screenHeight: " + screenHeight);
             logger.add(LogTypes.ColorCapturing, "screenWidth: " + screenWidth);
         }
@@ -136,9 +136,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// <summary>
         /// Method for start capture thread. Its "output" will be the array of colors of specified parts of screen
         /// </summary>
-        public void start_capturing_with_grid()
+        public void start_capturing_with_grid(int res_vertical, int res_horizontal)
         {
-            setResolution(2, 2);
+            setResolution(res_vertical, res_horizontal);
             thread_colorCapturing_with_grid = new Thread(capture_pixel_color_with_full_image);
             thread_colorCapturing_with_grid.Start();
             while (!thread_colorCapturing_with_grid.IsAlive) ;

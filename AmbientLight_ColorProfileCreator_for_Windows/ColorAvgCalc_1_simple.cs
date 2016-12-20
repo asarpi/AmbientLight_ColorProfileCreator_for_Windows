@@ -9,6 +9,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 {
     public class ColorAvgCalc_1_simple: ColorAvgCalc_one_out
     {
+        public ColorAvgCalc_1_simple(int resolution_vertical, int resolution_horizontal) : base(resolution_vertical, resolution_horizontal) { }
         //simple average, every elements of matrix are 1
         protected override void createAvgBaseMatrix()
         {
@@ -34,9 +35,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 for (int rect_id_hor = 0; rect_id_hor < captured_vertical_res; rect_id_hor++)
                 {
                     rawColors = colorCapture.getColor();
-                        color_R += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].R;
-                        color_G += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].G;
-                        color_B += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].B;
+
+                    color_R += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].R;
+                    color_G += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].G;
+                    color_B += rawColors[rect_id_vert * captured_vertical_res + rect_id_hor].B;
 
                 }
             }

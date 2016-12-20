@@ -21,6 +21,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         public Graphics graphics; //grapichs object for drawing
         public ColorAvgCalc_1_simple avgCalculator;
 
+        public int num_of_boxes_vertical = 10;
+        public int num_of_boxes_horizontal = 10;
+
 
         Thread thread_fillingColorBox;
 
@@ -40,9 +43,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             graphics = this.CreateGraphics();
             //colorCapture = new ColorCapture();
-            avgCalculator = new ColorAvgCalc_1_simple();
-            thread_fillingColorBox = new Thread(fillingOneColorBox); //initialization of thread
-            //thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of thread
+            avgCalculator = new ColorAvgCalc_1_simple(num_of_boxes_vertical,num_of_boxes_horizontal);
+            //thread_fillingColorBox = new Thread(fillingOneColorBox); //initialization of thread
+            thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of thread
             
             
             //thread_fillingColorBox.Start();
