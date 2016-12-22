@@ -25,8 +25,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         displayedColorValues colorBoxes;
 
 
-        public int num_of_boxes_vertical = 10;
-        public int num_of_boxes_horizontal = 10;
+        public int num_of_boxes_vertical = 7;
+        public int num_of_boxes_horizontal = 7;
+        CB2LP_converter_border_zoh_interpolation converter;
 
 
         Thread thread_fillingColorBox;
@@ -87,28 +88,27 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             indices.top_first = 22;
             indices.top_last = 28;
 
-            CB2LP_converter_border_zoh_interpolation converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { 5, 5 });
-            /*
+            converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
+            
             click_counter++;
             if (click_counter % 2 == 1)
             {
                 if (thread_fillingColorBox.ThreadState != ThreadState.Running)
                 {
-                    //start  
-                    
+                    // start  
                     thread_fillingColorBox.Start();
                 }
             }
             else
             {
-                //Stop
+                // Stop 
                 if (thread_fillingColorBox.ThreadState == ThreadState.Running)
                 {
                     thread_fillingColorBox.Abort();
                 }
                 
             }
-            */
+            
         }
 
         public static Rectangle rectangle; // = new Rectangle(50, 50, 150, 150);
@@ -129,11 +129,12 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             while (true)
             {
                 number_of_rectangles = avgCalculator.getCapturedResolution();
-
-                calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];
+                
+                //calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];
                 colors_of_rectangles = avgCalculator.getRawColors();
-                createColorMatrix(colors_of_rectangles);
-                colorBoxes = createDisplayableBoxes(calculatedAvgColorMatrix, 50, 50, 50, 50);
+                converter.fillLEDarray(colors_of_rectangles);
+                
+                colorBoxes = converter.createDisplayableBoxes(50, 50, 25, 25);
 
                 for (int i = 0; i < number_of_rectangles[0]; i++)
                 {
@@ -142,6 +143,21 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                         graphics.FillRectangle(colorBoxes.rectBrushes[i, j], colorBoxes.rects[i, j]);
                     }
                 }
+                
+                colorBoxes = converter.displayLEDstripColors(50, 400, 25, 25);
+                Console.WriteLine("a");
+                for (int i = 0; i < converter.getNumOfLeds(); i++)
+                {
+                    graphics.FillRectangle(colorBoxes.rectBrushes[i, 0], colorBoxes.rects[i, 0]);
+                }
+
+                Color[,] cM = converter.getColorMatrix();
+                Rectangle rect = new Rectangle(400, 50, 50, 50);
+                SolidBrush brush = new SolidBrush(cM[0, 5]);
+                graphics.FillRectangle(brush, rect);
+
+
+                
             }
 
             /*

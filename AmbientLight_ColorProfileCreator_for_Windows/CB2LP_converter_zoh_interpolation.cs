@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace AmbientLight_ColorProfileCreator_for_Windows
@@ -35,8 +36,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             int[,] associated_box_array_to_left_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
-                associated_box_array_to_left_side[i, 0] = 0; //first column, because it is the left side
-                associated_box_array_to_left_side[i, 1] = i; // all rows
+                associated_box_array_to_left_side[i, 0] = i; // all rows
+                associated_box_array_to_left_side[i, 1] = 0; //first column, because it is the left side
             }
             // TODO
             if (number_of_leds < number_of_boxes)
@@ -52,8 +53,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             int[,] associated_box_array_to_bottom_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
-                associated_box_array_to_bottom_side[i, 0] = i; // all columns
-                associated_box_array_to_bottom_side[i, 1] = num_of_captured_boxes[1] - 1; // last row (number of rows - 1), because it is the bottom side
+                associated_box_array_to_bottom_side[i, 0] = num_of_captured_boxes[1] - 1; // last row (number of rows - 1), because it is the bottom side
+                associated_box_array_to_bottom_side[i, 1] = i; // all columns
             }
 
             if (number_of_leds < number_of_boxes)
@@ -69,8 +70,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             int[,] associated_box_array_to_right_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
-                associated_box_array_to_right_side[i, 0] = num_of_captured_boxes[0] - 1; // last column (numOfColumns - 1) , because it is the right side of the grid
-                associated_box_array_to_right_side[i, 1] = i; // all rows
+                associated_box_array_to_right_side[i, 0] = i; // all rows
+                associated_box_array_to_right_side[i, 1] = num_of_captured_boxes[0] - 1; // last column (numOfColumns - 1) , because it is the right side of the grid
             }
 
             if (number_of_leds < number_of_boxes)
@@ -87,8 +88,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             int[,] associated_box_array_to_top_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
-                associated_box_array_to_top_side[i, 0] = i; // all columns
-                associated_box_array_to_top_side[i, 1] = 0; // first row, because it is the top of the grip
+                associated_box_array_to_top_side[i, 0] = 0; // first row, because it is the top of the grid
+                associated_box_array_to_top_side[i, 1] = i; // all columns
             }
 
 
@@ -124,11 +125,12 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 // if associated number of boxes are less than the possible number of association to a LED
                 if (associatedNum < num_of_possible_associated_boxes)
                 {
+                    // is this is the first associated box --> initialize the new LED's slot
                     if (associatedNum == 0)
                         associatedBoxes[slotNum] = new LinkedList<utils.ColRowRepresentation>();
                     // store box's coordinates
-                    boxCoordinates.column = selected_box_array[box_i,0]; // in this case, the border columns are associated to the LEDs. Therefore, the first column is corresponding to the left side LEDs
-                    boxCoordinates.row = selected_box_array[box_i, 1];
+                    boxCoordinates.row = selected_box_array[box_i, 0];
+                    boxCoordinates.column = selected_box_array[box_i, 1]; // in this case, the border columns are associated to the LEDs. Therefore, the first column is corresponding to the left side LEDs
                     associatedBoxes[slotNum].AddLast(boxCoordinates);
                     associatedNum++;
                 }
@@ -139,8 +141,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     if (slotNum == num_of_leds - 1)
                     {
                         //store box's coordinates
-                        boxCoordinates.column = selected_box_array[box_i, 0];
-                        boxCoordinates.row = selected_box_array[box_i, 1];
+                        boxCoordinates.row = selected_box_array[box_i, 0];
+                        boxCoordinates.column = selected_box_array[box_i, 1];
                         associatedBoxes[slotNum].AddLast(boxCoordinates);
                     }
                     // if slotNum is less than the maximum, step to the next one
@@ -150,10 +152,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                         slotNum++;
                         if (slotNum < num_of_leds)
                         {
-                            //store box's coordinates
+                            //store box's coordinates to the new slot
                             associatedBoxes[slotNum] = new LinkedList<utils.ColRowRepresentation>();
-                            boxCoordinates.column = selected_box_array[box_i, 0];
-                            boxCoordinates.row = selected_box_array[box_i, 1];
+                            boxCoordinates.row = selected_box_array[box_i, 0];
+                            boxCoordinates.column = selected_box_array[box_i, 1];
                             associatedBoxes[slotNum].AddLast(boxCoordinates);
 
                             associatedNum = 1;
@@ -191,12 +193,13 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             for (int led_id = 0; led_id < num_of_leds; led_id++)
             {
+                // initializate the new slot
                 associatedBoxes[led_id] = new LinkedList<utils.ColRowRepresentation>();
                 // if the number of associated LEDs is less than the possible value, store the examined box to a LED's "slot"
                 if (associatedNum < num_of_possible_associated_LEDs)
                 {
-                    boxCoordinates.column = selected_box_array[boxNum, 0];
-                    boxCoordinates.row = selected_box_array[boxNum, 1];
+                    boxCoordinates.row = selected_box_array[boxNum, 0];
+                    boxCoordinates.column = selected_box_array[boxNum, 1];
                     associatedBoxes[led_id].AddLast(boxCoordinates);
                     associatedNum++;
                 }
@@ -206,8 +209,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     // is we haven't more boxes, the last one will be associated to all remained LEDs
                     if (boxNum == num_of_boxes - 1)
                     {
-                        boxCoordinates.column = selected_box_array[boxNum, 0];
-                        boxCoordinates.row = selected_box_array[boxNum, 1];
+                        boxCoordinates.row = selected_box_array[boxNum, 0];
+                        boxCoordinates.column = selected_box_array[boxNum, 1];
                         associatedBoxes[led_id].AddLast(boxCoordinates);
                     }
 
@@ -219,8 +222,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                         boxNum++;
                         if (boxNum < num_of_boxes)
                         {
-                            boxCoordinates.column = selected_box_array[boxNum, 0];
-                            boxCoordinates.row = selected_box_array[boxNum, 1];
+                            // store next box to the slot
+                            boxCoordinates.row = selected_box_array[boxNum, 0];
+                            boxCoordinates.column = selected_box_array[boxNum, 1];
                             associatedBoxes[led_id].AddLast(boxCoordinates);
                             associatedNum = 1;
                         }
@@ -332,11 +336,62 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             logger.add(LogTypes.ColorBox2LEDPixelConverter, log_entry);
 
         }
-        public override void fillAssociatedLEDs()
+
+        public override void fillAssociatedLEDs(Color[] colorArray)
         {
-            Console.WriteLine("muhaha");
+
+            associatedLEDs.left = new Color[LED_indices.left_last - LED_indices.left_first + 1];
+            associatedLEDs.bottom = new Color[LED_indices.bottom_last - LED_indices.bottom_first + 1];
+            associatedLEDs.right = new Color[LED_indices.right_last - LED_indices.right_first + 1];
+            associatedLEDs.top = new Color[LED_indices.top_last - LED_indices.top_first + 1];
+
+            createColorMatrix(colorArray);
+            
+            //left
+            for (int led_id = 0; led_id < associatedLEDs.left.GetLength(0); led_id ++)
+            {
+                associatedLEDs.left[led_id] = calcAvgColorFromColorList(associatedColorBoxesLits.left[led_id]);
+            }
+            //bottom
+            for (int led_id = 0; led_id < associatedLEDs.bottom.GetLength(0); led_id++)
+            {
+                associatedLEDs.bottom[led_id] = calcAvgColorFromColorList(associatedColorBoxesLits.bottom[led_id]);
+            }
+            //right
+            for (int led_id = 0; led_id < associatedLEDs.right.GetLength(0); led_id++)
+            {
+                associatedLEDs.right[led_id] = calcAvgColorFromColorList(associatedColorBoxesLits.right[led_id]);
+            }
+            //top
+            for (int led_id = 0; led_id < associatedLEDs.top.GetLength(0); led_id++)
+            {
+                associatedLEDs.top[led_id] = calcAvgColorFromColorList(associatedColorBoxesLits.top[led_id]);
+            }
+
+
         }
 
-        
+
+        private long c_R, c_G, c_B;
+        private Color t_color;
+        protected override Color calcAvgColorFromColorList(LinkedList<utils.ColRowRepresentation> colorBoxCoordinates)
+        {
+            c_R = c_G = c_B = 0;
+            t_color = new Color();
+            foreach (utils.ColRowRepresentation box in colorBoxCoordinates)
+            {
+                t_color = colorMatrix[box.row, box.column];
+                c_R += t_color.R;
+                c_G += t_color.G;
+                c_B += t_color.B;
+            }
+            c_R /= colorBoxCoordinates.Count();
+            c_G /= colorBoxCoordinates.Count();
+            c_B /= colorBoxCoordinates.Count();
+
+
+            return Color.FromArgb(Convert.ToInt32(c_R), Convert.ToInt32(c_G), Convert.ToInt32(c_B));
+        }
+
     }
 }

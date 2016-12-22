@@ -32,15 +32,18 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /***** VARIABLE DEFINITIONS *****/
         protected byte num_of_LEDs = 30;
         protected AssociatedLED_indices LED_indices;
-        protected Color[,] calculatedAvgColorMatrix;
+        protected Color[,] colorMatrix;
         protected int[] num_of_captured_boxes;
+        protected Color[] ledColors;
+        private int real_led_id;
+
 
         protected struct AssociatedLEDs
         {
-            public byte[,] left;
-            public byte[,] bottom;
-            public byte[,] right;
-            public byte[,] top;
+            public Color[] left;
+            public Color[] bottom;
+            public Color[] right;
+            public Color[] top;
         }
         protected AssociatedLEDs associatedLEDs;
 
@@ -65,14 +68,14 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             num_of_LEDs = num_of_leds;
             LED_indices = indices;
             num_of_captured_boxes = captured_box_num;
-            calculatedAvgColorMatrix = new Color[num_of_captured_boxes[0], num_of_captured_boxes[1]];
+            colorMatrix = new Color[num_of_captured_boxes[0], num_of_captured_boxes[1]];
 
             associatedLEDs = new AssociatedLEDs();
-            // LED array : new byte(number of contained LEDs, number of colors (3))
-            associatedLEDs.left =   new byte[LED_indices.left_last   - LED_indices.left_first + 1,    3];
-            associatedLEDs.bottom = new byte[LED_indices.bottom_last - LED_indices.bottom_first + 1,  3];
-            associatedLEDs.right =  new byte[LED_indices.right_last  - LED_indices.right_first + 1,   3];
-            associatedLEDs.top =    new byte[LED_indices.top_last    - LED_indices.top_first + 1,     3];
+            // LED array : new Color[number of contained LEDs]
+            associatedLEDs.left =   new Color[LED_indices.left_last   - LED_indices.left_first + 1];
+            associatedLEDs.bottom = new Color[LED_indices.bottom_last - LED_indices.bottom_first + 1];
+            associatedLEDs.right =  new Color[LED_indices.right_last  - LED_indices.right_first + 1];
+            associatedLEDs.top =    new Color[LED_indices.top_last    - LED_indices.top_first + 1];
 
             createAssociatedColorBoxesList();
 
@@ -80,7 +83,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         /***** ABSTRACT FUNCTIONS ****/
 
-        public abstract void fillAssociatedLEDs();
+        public abstract void fillAssociatedLEDs(Color[] colorArray);
+
+        protected abstract Color calcAvgColorFromColorList(LinkedList<utils.ColRowRepresentation> colorBoxCoordinates);
 
         protected abstract void createAssociatedColorBoxesList();
         /***** PRIVATE FUNCTIONS ****/
@@ -92,15 +97,60 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 {
                     for (int id_box_horizontal = 0; id_box_horizontal < num_of_captured_boxes[1]; id_box_horizontal++)
                     {
-                        calculatedAvgColorMatrix[id_box_vertical, id_box_horizontal] = colorArray[id_box_vertical * num_of_captured_boxes[1] + id_box_horizontal];
+                        colorMatrix[id_box_vertical, id_box_horizontal] = colorArray[id_box_vertical * num_of_captured_boxes[1] + id_box_horizontal];
                     }
                 }
             }
         }
 
         /**** PUBLIC FUNCTIONS ****/
+        public Color[] fillLEDarray(Color[] capturedColorArray)
+        {
+            fillAssociatedLEDs(capturedColorArray);
+            ledColors = new Color[num_of_LEDs];
+            real_led_id = 0;
+            //left
+            for (int led_id = 0; led_id < associatedLEDs.left.GetLength(0); led_id++)
+            {
+                ledColors[real_led_id] = associatedLEDs.left[led_id];
+                real_led_id++;
+            }
+            //bottom
+            for (int led_id = 0; led_id < associatedLEDs.bottom.GetLength(0); led_id++)
+            {
+                ledColors[real_led_id] = associatedLEDs.bottom[led_id];
+                real_led_id++;
+            }
+            //right (reversed direction, because the grid indices are increasing in the generated list)
+            for (int led_id = associatedLEDs.right.GetLength(0) -1; led_id >= 0; led_id--)
+            {
+                ledColors[real_led_id] = associatedLEDs.right[led_id];
+                real_led_id++;
+            }
+            //top (reversed direction, because the grid indices are increasing in the generated list)
+            for (int led_id = associatedLEDs.top.GetLength(0) - 1; led_id >= 0; led_id--)
+            {
+                ledColors[real_led_id] = associatedLEDs.top[led_id];
+                real_led_id++;
+            }
 
-        public displayedColorValues createDisplayableBoxes(Color[,] colorMatrix, int pos_x, int pos_y, int width, int height)
+            return ledColors;
+        }
+
+
+        /*** PUBLIC GET AND DISPLAY METHODS ***/
+        
+        public int getNumOfLeds()
+        {
+            return Convert.ToInt32(num_of_LEDs);
+        }
+
+        public Color[,] getColorMatrix()
+        {
+            return colorMatrix;
+        }
+            
+        public displayedColorValues createDisplayableBoxes(int pos_x, int pos_y, int width, int height)
         {
             displayedColorValues boxes = new displayedColorValues();
             boxes.rects = new Rectangle[num_of_captured_boxes[0], num_of_captured_boxes[1]];
@@ -113,6 +163,21 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     boxes.rects[id_vert, id_hor] = new Rectangle(pos_x + (id_hor * width) + 5 , pos_y + (id_vert * height) + 5, width, height);
                     boxes.rectBrushes[id_vert, id_hor] = new SolidBrush(colorMatrix[id_vert, id_hor]);
                 }
+            }
+
+            return boxes;
+        }
+
+        public displayedColorValues displayLEDstripColors(int pos_x, int pos_y, int width, int height)
+        {
+            displayedColorValues boxes = new displayedColorValues();
+            boxes.rects = new Rectangle[num_of_LEDs, 1];
+            boxes.rectBrushes = new SolidBrush[num_of_LEDs, 1];
+
+            for (int led_id = 0; led_id < num_of_LEDs; led_id++)
+            {
+                boxes.rects[led_id, 0] = new Rectangle(pos_x + (led_id * width) + 10, pos_y + 5, width, height);
+                boxes.rectBrushes[led_id, 0] = new SolidBrush(ledColors[led_id]);
             }
 
             return boxes;
