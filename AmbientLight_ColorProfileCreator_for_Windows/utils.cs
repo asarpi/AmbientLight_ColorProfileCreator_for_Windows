@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AmbientLight_ColorProfileCreator_for_Windows
 {
+
     public class utils
     {
         public static int threshold_int(object variable, int min, int max)
@@ -16,6 +17,12 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             if (result <= min)
                 result = min;
             return result;
+        }
+
+        public struct ColRowRepresentation
+        {
+            public int column;
+            public int row;
         }
     }
 

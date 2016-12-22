@@ -33,7 +33,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         protected byte num_of_LEDs = 30;
         protected AssociatedLED_indices LED_indices;
         protected Color[,] calculatedAvgColorMatrix;
-        private int[] num_of_captured_boxes;
+        protected int[] num_of_captured_boxes;
 
         protected struct AssociatedLEDs
         {
@@ -42,8 +42,21 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             public byte[,] right;
             public byte[,] top;
         }
+        protected AssociatedLEDs associatedLEDs;
 
-        AssociatedLEDs associatedLEDs;
+
+        // Struct for store which boxes are associated to wich LEDs. Elements are divided to left, bottom, right and top sides.
+        // Each element is an array of LinkedLists, where the elements (LinkedLists) are associated to the physical LEDs. A LinkedList conatins
+        // each associated boxes with their coordinates in the captured grid.
+        // The filling method is case specific, thus its implementation must be in the derived class.
+        protected struct AssociatedColorBoxesLists
+        {
+            public LinkedList<utils.ColRowRepresentation>[] left;
+            public LinkedList<utils.ColRowRepresentation>[] bottom;
+            public LinkedList<utils.ColRowRepresentation>[] right;
+            public LinkedList<utils.ColRowRepresentation>[] top;
+        }
+        protected AssociatedColorBoxesLists associatedColorBoxesLits;
 
         /***** PUBLIC FUNCTIONS *****/
 
@@ -61,16 +74,17 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             associatedLEDs.right =  new byte[LED_indices.right_last  - LED_indices.right_first + 1,   3];
             associatedLEDs.top =    new byte[LED_indices.top_last    - LED_indices.top_first + 1,     3];
 
-
+            createAssociatedColorBoxesList();
 
         }
 
         /***** ABSTRACT FUNCTIONS ****/
 
-        protected abstract void fillAssociatedLEDs();
+        public abstract void fillAssociatedLEDs();
 
+        protected abstract void createAssociatedColorBoxesList();
         /***** PRIVATE FUNCTIONS ****/
-        public void createColorMatrix(Color[] colorArray)
+        protected void createColorMatrix(Color[] colorArray)
         {
             foreach (Color c in colorArray)
             {

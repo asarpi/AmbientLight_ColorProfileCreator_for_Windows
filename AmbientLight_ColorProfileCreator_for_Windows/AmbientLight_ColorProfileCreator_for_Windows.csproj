@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvgColorCalculator.cs" />
+    <Compile Include="CB2LP_converter_zoh_interpolation.cs" />
     <Compile Include="ColorAvgCalc_1_simple.cs" />
     <Compile Include="ColorAvgCalc_one_out.cs" />
     <Compile Include="ColorBoxes2LEDPixelsConverter.cs" />

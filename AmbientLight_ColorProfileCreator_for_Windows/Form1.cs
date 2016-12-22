@@ -77,6 +77,18 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
+            AssociatedLED_indices indices = new AssociatedLED_indices();
+            indices.left_first = 0;
+            indices.left_last = 7;
+            indices.bottom_first = 8;
+            indices.bottom_last = 14;
+            indices.right_first = 15;
+            indices.right_last = 21;
+            indices.top_first = 22;
+            indices.top_last = 28;
+
+            CB2LP_converter_border_zoh_interpolation converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { 5, 5 });
+            /*
             click_counter++;
             if (click_counter % 2 == 1)
             {
@@ -96,6 +108,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 }
                 
             }
+            */
         }
 
         public static Rectangle rectangle; // = new Rectangle(50, 50, 150, 150);
@@ -115,8 +128,6 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             while (true)
             {
-
-
                 number_of_rectangles = avgCalculator.getCapturedResolution();
 
                 calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];

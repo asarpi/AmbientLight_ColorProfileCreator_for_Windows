@@ -13,6 +13,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         ColorCapturing = 1,
         ColorAvgCalculator = 2,
         CatchedException = 3,
+        ColorBox2LEDPixelConverter = 4,
 
 
     }
