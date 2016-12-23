@@ -50,6 +50,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         private void Form1_Load(object sender, EventArgs e)
         {
             logger.begin();
+            ConfigurationManagger configs = new ConfigurationManagger();
             comboBox_comPortList.Items.Add("Default");
             
 
@@ -70,7 +71,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             setConnectionStatus(converter.getSerialOpenFlag());
             textBox_board.Text = "Aruino Nano w ATmega 328";
 
-            //ConfigurationManagger configs = new ConfigurationManagger();
+            
+            //configs.setDefaultValues();
+            //configs = new ConfigurationManagger();
 
 
         }

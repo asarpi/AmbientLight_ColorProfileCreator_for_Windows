@@ -16,6 +16,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         CatchedException = 3,
         ColorBox2LEDPixelConverter = 4,
         SerialPort = 5,
+        Config = 6,
 
 
     }
