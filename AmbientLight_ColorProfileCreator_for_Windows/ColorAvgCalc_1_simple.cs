@@ -15,9 +15,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             
             avgBaseMatrix = new int[captured_vertical_res, captured_horizontal_res];
-            for (int i = 0; i < captured_horizontal_res; i++)
+            for (int j = 0; j < captured_horizontal_res; j++)
             {
-                for (int j = 0; j < captured_vertical_res; j++)
+                for (int i = 0; i < captured_vertical_res; i++)
                 {
                     avgBaseMatrix[i, j] = 1;
                 }

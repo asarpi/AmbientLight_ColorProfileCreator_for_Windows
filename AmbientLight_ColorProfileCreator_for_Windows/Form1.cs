@@ -25,8 +25,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         displayedColorValues colorBoxes;
 
 
-        public int num_of_boxes_vertical = 7;
-        public int num_of_boxes_horizontal = 7;
+        public int num_of_boxes_vertical = 2;
+        public int num_of_boxes_horizontal = 5;
         CB2LP_converter_border_zoh_interpolation converter;
 
 
@@ -47,25 +47,43 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             logger.begin();
 
             graphics = this.CreateGraphics();
-            //colorCapture = new ColorCapture();
             avgCalculator = new ColorAvgCalc_1_simple(num_of_boxes_vertical,num_of_boxes_horizontal);
             //thread_fillingColorBox = new Thread(fillingOneColorBox); //initialization of thread
             thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of thread
-            
-            
-            //thread_fillingColorBox.Start();
-            //while (!thread_fillingColorBox.IsAlive) ;
-            //thread_fillingColorBox.Join();
-            //ThreadPool.QueueUserWorkItem(fillingColorBox, 1);
+            AssociatedLED_indices indices = new AssociatedLED_indices();
+            indices.left_first = 0;
+            indices.left_last = 1;
+            indices.bottom_first = 2;
+            indices.bottom_last = 14;
+            indices.right_first = 15;
+            indices.right_last = 16;
+            indices.top_first = 17;
+            indices.top_last = 29;
+            converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
+
+
 
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             //close everything from this app and save logger to file
-            
             logger.close();
-            thread_fillingColorBox.Abort();
+            if (thread_fillingColorBox.ThreadState != ThreadState.Unstarted)
+            {
+
+                if ((thread_fillingColorBox.ThreadState != ThreadState.Aborted) && (thread_fillingColorBox.ThreadState != ThreadState.AbortRequested))
+                {
+                    thread_fillingColorBox.Abort();
+                }
+                while (thread_fillingColorBox.ThreadState != ThreadState.Aborted)
+                {
+                    Console.WriteLine(thread_fillingColorBox.ThreadState);
+                    //do nothing. Wait for aborting.
+                }
+            }
+            
+            
             Environment.Exit(Environment.ExitCode);
             //thread_fillingColorBox.Abort();
         }
@@ -78,25 +96,16 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            AssociatedLED_indices indices = new AssociatedLED_indices();
-            indices.left_first = 0;
-            indices.left_last = 7;
-            indices.bottom_first = 8;
-            indices.bottom_last = 14;
-            indices.right_first = 15;
-            indices.right_last = 21;
-            indices.top_first = 22;
-            indices.top_last = 28;
-
-            converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
             
             click_counter++;
             if (click_counter % 2 == 1)
             {
                 if (thread_fillingColorBox.ThreadState != ThreadState.Running)
                 {
-                    // start  
+
+                    thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of the thread or re-initialization if it is aborted
                     thread_fillingColorBox.Start();
+                    
                 }
             }
             else
@@ -128,6 +137,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             while (true)
             {
+                
                 number_of_rectangles = avgCalculator.getCapturedResolution();
                 
                 //calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];
@@ -145,48 +155,14 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 }
                 
                 colorBoxes = converter.displayLEDstripColors(50, 400, 25, 25);
-                Console.WriteLine("a");
                 for (int i = 0; i < converter.getNumOfLeds(); i++)
                 {
                     graphics.FillRectangle(colorBoxes.rectBrushes[i, 0], colorBoxes.rects[i, 0]);
                 }
 
-                Color[,] cM = converter.getColorMatrix();
-                Rectangle rect = new Rectangle(400, 50, 50, 50);
-                SolidBrush brush = new SolidBrush(cM[0, 5]);
-                graphics.FillRectangle(brush, rect);
-
-
+                
                 
             }
-
-            /*
-            while (true)
-            {
-                number_of_rectangles = avgCalculator.getCapturedResolution();
-
-                // INTERFACE TO CALCULATED COLORS
-                colors_of_rectangles = avgCalculator.getRawColors();
-
-                rectangle = new Rectangle(50, 50, 150, 150);
-                foreach (Color c in colors_of_rectangles)
-                {
-                    for (int id_rect_vertical = 0; id_rect_vertical < number_of_rectangles[0]; id_rect_vertical++)
-                    {
-                        for (int id_rect_horizontal = 0; id_rect_horizontal < number_of_rectangles[1]; id_rect_horizontal++)
-                        {
-                            rectangle = new Rectangle(rect_x + (id_rect_horizontal * rect_width)+5,
-                                                      rect_y + (id_rect_vertical * rect_height)+5,
-                                                      rect_width,
-                                                      rect_height);
-                            myBrush = new SolidBrush(colors_of_rectangles[id_rect_vertical * number_of_rectangles[1] + id_rect_horizontal ]);
-                                graphics.FillRectangle(myBrush, rectangle);
-                            
-                        }
-                    }
-                }
-            }
-            */
 
         }
 
@@ -236,6 +212,22 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 
             }
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+            Color[] colorArray = new Color[30];
+            Color desiredColor = colorDialog1.Color;
+            for (byte i = 0; i<30; i++)
+            {
+                colorArray[i] = desiredColor;
+            }
+            converter.setLEDStrip(colorArray);
+
+            Rectangle rect = new Rectangle(400, 50, 50, 50);
+            SolidBrush brush = new SolidBrush(desiredColor);
+            graphics.FillRectangle(brush, rect);
         }
     }
 }

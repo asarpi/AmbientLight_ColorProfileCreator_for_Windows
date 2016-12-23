@@ -230,7 +230,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 {
                     t_curr = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                     t_curr = DateTime.Now.Millisecond;
-                    logger.add(LogTypes.ColorCapturing, "\timage processing turnaround time: " + (t_curr - t_last));
+                    //logger.add(LogTypes.ColorCapturing, "\timage processing turnaround time: " + (t_curr - t_last));
                     t_last = t_curr;
                     //Console.Write(" b1 {0}  ", Convert.ToSingle(t_curr - t_last) / 1000);
                     using (Graphics gsrc = Graphics.FromHwnd(IntPtr.Zero))

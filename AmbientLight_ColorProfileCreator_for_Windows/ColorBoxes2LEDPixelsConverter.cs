@@ -36,6 +36,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         protected int[] num_of_captured_boxes;
         protected Color[] ledColors;
         private int real_led_id;
+        private SerialInterface serial;
 
 
         protected struct AssociatedLEDs
@@ -65,6 +66,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         public ColorBoxes2LEDPixelsConverter(byte num_of_leds, AssociatedLED_indices indices, int[] captured_box_num)
         {
+            serial = new SerialInterface();
             num_of_LEDs = num_of_leds;
             LED_indices = indices;
             num_of_captured_boxes = captured_box_num;
@@ -76,7 +78,6 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             associatedLEDs.bottom = new Color[LED_indices.bottom_last - LED_indices.bottom_first + 1];
             associatedLEDs.right =  new Color[LED_indices.right_last  - LED_indices.right_first + 1];
             associatedLEDs.top =    new Color[LED_indices.top_last    - LED_indices.top_first + 1];
-
             createAssociatedColorBoxesList();
 
         }
@@ -131,9 +132,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             for (int led_id = associatedLEDs.top.GetLength(0) - 1; led_id >= 0; led_id--)
             {
                 ledColors[real_led_id] = associatedLEDs.top[led_id];
-                real_led_id++;
+                    real_led_id++;
             }
 
+            serial.sendColorArray(ledColors);
             return ledColors;
         }
 
@@ -149,7 +151,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             return colorMatrix;
         }
-            
+
+        public void setLEDStrip(Color[] cArray)
+        {
+            serial.sendColorArray(cArray);
+        }
         public displayedColorValues createDisplayableBoxes(int pos_x, int pos_y, int width, int height)
         {
             displayedColorValues boxes = new displayedColorValues();

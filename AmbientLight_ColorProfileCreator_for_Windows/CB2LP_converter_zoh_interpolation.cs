@@ -30,7 +30,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             /*** left side association ***/
             number_of_leds = associatedLEDs.left.GetLength(0);
-            number_of_boxes = num_of_captured_boxes[1]; //rows
+            number_of_boxes = num_of_captured_boxes[0]; //rows
             // create the list of coordinates of associated boxes 
             //      (N x 2 matrix, where for example A[0] = {1,2}  means the 0-th associated box is in the 1-st column and 2-nd row in the captured grid)
             int[,] associated_box_array_to_left_side = new int[number_of_boxes, 2];
@@ -47,13 +47,13 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             /*** bottom side association ***/
             number_of_leds = associatedLEDs.bottom.GetLength(0);
-            number_of_boxes = num_of_captured_boxes[0]; //columns
+            number_of_boxes = num_of_captured_boxes[1]; //columns
             // create the list of coordinates of associated boxes 
             //      (N x 2 matrix, where for example A[0] = {1,2}  means the 0-th associated box is in the 1-st column and 2-nd row in the captured grid)
             int[,] associated_box_array_to_bottom_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
-                associated_box_array_to_bottom_side[i, 0] = num_of_captured_boxes[1] - 1; // last row (number of rows - 1), because it is the bottom side
+                associated_box_array_to_bottom_side[i, 0] = num_of_captured_boxes[0] - 1; // last row (number of rows - 1), because it is the bottom side
                 associated_box_array_to_bottom_side[i, 1] = i; // all columns
             }
 
@@ -64,14 +64,14 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             /*** right side association ***/
             number_of_leds = associatedLEDs.right.GetLength(0);
-            number_of_boxes = num_of_captured_boxes[1]; //rows
+            number_of_boxes = num_of_captured_boxes[0]; //rows
             // create the list of coordinates of associated boxes 
             //      (N x 2 matrix, where for example A[0] = {1,2}  means the 0-th associated box is in the 1-st column and 2-nd row in the captured grid)
             int[,] associated_box_array_to_right_side = new int[number_of_boxes, 2];
             for (int i = 0; i < number_of_boxes; i++)
             {
                 associated_box_array_to_right_side[i, 0] = i; // all rows
-                associated_box_array_to_right_side[i, 1] = num_of_captured_boxes[0] - 1; // last column (numOfColumns - 1) , because it is the right side of the grid
+                associated_box_array_to_right_side[i, 1] = num_of_captured_boxes[1] - 1; // last column (numOfColumns - 1) , because it is the right side of the grid
             }
 
             if (number_of_leds < number_of_boxes)
@@ -82,7 +82,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             /*** top side association ***/
             number_of_leds = associatedLEDs.top.GetLength(0);
-            number_of_boxes = num_of_captured_boxes[0]; //columns
+            number_of_boxes = num_of_captured_boxes[1]; //columns
             // create the list of coordinates of associated boxes 
             //      (N x 2 matrix, where for example A[0] = {1,2}  means the 0-th associated box is in the 1-st column and 2-nd row in the captured grid)
             int[,] associated_box_array_to_top_side = new int[number_of_boxes, 2];
@@ -243,7 +243,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             //associated grid elements to sides
             // left
             string log_entry = "associated grid elements to left side:";
-            for (int i = 0; i < num_of_captured_boxes[1]; i++)
+            for (int i = 0; i < num_of_captured_boxes[0]; i++) //num_of_rows
             {
 
                 log_entry = log_entry + " [" + Convert.ToString(associated_box_array_to_left_side[i, 0]);
@@ -254,7 +254,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             // bottom
             log_entry = "associated grid elements to bottom side:";
-            for (int i = 0; i < num_of_captured_boxes[0]; i++)
+            for (int i = 0; i < num_of_captured_boxes[1]; i++)
             {
 
                 log_entry = log_entry + " [" + Convert.ToString(associated_box_array_to_bottom_side[i, 0]);
@@ -265,7 +265,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             // right
             log_entry = "associated grid elements to right side:";
-            for (int i = 0; i < num_of_captured_boxes[1]; i++)
+            for (int i = 0; i < num_of_captured_boxes[0]; i++)
             {
 
                 log_entry = log_entry + " [" + Convert.ToString(associated_box_array_to_right_side[i, 0]);
@@ -276,7 +276,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             // top
             log_entry = "associated grid elements to top side:";
-            for (int i = 0; i < num_of_captured_boxes[0]; i++)
+            for (int i = 0; i < num_of_captured_boxes[1]; i++)
             {
 
                 log_entry = log_entry + " [" + Convert.ToString(associated_box_array_to_top_side[i, 0]);
