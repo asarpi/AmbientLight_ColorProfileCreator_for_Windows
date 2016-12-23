@@ -10,10 +10,11 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Runtime.InteropServices;
 using AmbientLight_ColorProfileCreator_for_Windows;
+using System.IO.Ports;
 
 namespace AmbientLight_ColorProfileCreator_for_Windows
 {
-    public partial class Form1 : Form
+    public partial class AmbiLight : Form
     {
         #region variable definitions
         
@@ -27,24 +28,30 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         public int num_of_boxes_vertical = 2;
         public int num_of_boxes_horizontal = 5;
+        private int number_of_leds = 30;
         CB2LP_converter_border_zoh_interpolation converter;
 
 
         Thread thread_fillingColorBox;
 
         private int click_counter = 0;
-     
+
+
 
         #endregion
-        public Form1()
+        public AmbiLight()
         {
             InitializeComponent();
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
         }
 
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             logger.begin();
+            comboBox_comPortList.Items.Add("Default");
+            
 
             graphics = this.CreateGraphics();
             avgCalculator = new ColorAvgCalc_1_simple(num_of_boxes_vertical,num_of_boxes_horizontal);
@@ -60,7 +67,10 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             indices.top_first = 17;
             indices.top_last = 29;
             converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
+            setConnectionStatus(converter.getSerialOpenFlag());
+            textBox_board.Text = "Aruino Nano w ATmega 328";
 
+            //ConfigurationManagger configs = new ConfigurationManagger();
 
 
         }
@@ -82,40 +92,32 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     //do nothing. Wait for aborting.
                 }
             }
-            
-            
+
+            Color[] colorArray = new Color[30];
+            for (byte i = 0; i < 30; i++)
+            {
+                colorArray[i] = Color.Black;
+            }
+            converter.setLEDStrip(colorArray);
             Environment.Exit(Environment.ExitCode);
             //thread_fillingColorBox.Abort();
         }
 
         /// <summary>
         /// Handler of button1 clicking events.
-        /// If you click the button, fillingColorBox thread will be started. If you click again, it will be stopped.
+        /// If you click the button, fillingColorBox thread will be started.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            click_counter++;
-            if (click_counter % 2 == 1)
-            {
-                if (thread_fillingColorBox.ThreadState != ThreadState.Running)
-                {
 
-                    thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of the thread or re-initialization if it is aborted
-                    thread_fillingColorBox.Start();
-                    
-                }
-            }
-            else
+            if (thread_fillingColorBox.ThreadState != ThreadState.Running)
             {
-                // Stop 
-                if (thread_fillingColorBox.ThreadState == ThreadState.Running)
-                {
-                    thread_fillingColorBox.Abort();
-                }
-                
+
+                thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of the thread or re-initialization if it is aborted
+                thread_fillingColorBox.Start();
+                textBox_messages.AppendText("Streaming is started\n");
             }
             
         }
@@ -139,11 +141,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             {
                 
                 number_of_rectangles = avgCalculator.getCapturedResolution();
-                
-                //calculatedAvgColorMatrix = new Color[number_of_rectangles[0], number_of_rectangles[1]];
+
                 colors_of_rectangles = avgCalculator.getRawColors();
                 converter.fillLEDarray(colors_of_rectangles);
-                
+
+                /* DEBUG
                 colorBoxes = converter.createDisplayableBoxes(50, 50, 25, 25);
 
                 for (int i = 0; i < number_of_rectangles[0]; i++)
@@ -160,7 +162,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                     graphics.FillRectangle(colorBoxes.rectBrushes[i, 0], colorBoxes.rects[i, 0]);
                 }
 
-                
+                */
                 
             }
 
@@ -214,8 +216,26 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         }
 
+        public void setConnectionStatus(bool serialOpenFlag)
+        {
+            if (serialOpenFlag)
+            {
+                textBox_connectionState.Text = "connected";
+            }
+            else
+            {
+                textBox_connectionState.Text = "not connected";
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
+            if (thread_fillingColorBox.ThreadState == ThreadState.Running)
+            {
+                thread_fillingColorBox.Abort();
+                textBox_messages.AppendText("Streaming is aborted\n");
+                textBox_messages.ScrollToCaret();
+            }
             colorDialog1.ShowDialog();
             Color[] colorArray = new Color[30];
             Color desiredColor = colorDialog1.Color;
@@ -225,9 +245,100 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             }
             converter.setLEDStrip(colorArray);
 
-            Rectangle rect = new Rectangle(400, 50, 50, 50);
-            SolidBrush brush = new SolidBrush(desiredColor);
-            graphics.FillRectangle(brush, rect);
+            textBox_manualColor.BackColor = desiredColor;
+            textBox_manualColor.ForeColor = Color.FromArgb(255 - desiredColor.R, 255 - desiredColor.G, 255 - desiredColor.B);
+            textBox_manualColor.Text = "R: " + desiredColor.R + " G: " + desiredColor.G + " B: " + desiredColor.B;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string[] availablePorts = SerialPort.GetPortNames();
+            foreach (string element in availablePorts)
+            {
+                comboBox_comPortList.Items.Add(element);
+            }
+            
+        }
+
+        private void tabPage_manualControl_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_stopStreaming_Click(object sender, EventArgs e)
+        {
+            if (thread_fillingColorBox.ThreadState == ThreadState.Running)
+            {
+                thread_fillingColorBox.Abort();
+                textBox_messages.AppendText("Streaming is aborted\n");
+                textBox_messages.ScrollToCaret();
+            }
+            else
+            {
+                textBox_messages.AppendText("Streaming is not runing\n");
+            }
+        }
+
+        private void button_resetLeds_Click(object sender, EventArgs e)
+        {
+            Color[] colorArray = new Color[number_of_leds];
+
+            for (byte i = 0; i < 30; i++)
+            {
+                colorArray[i] = Color.Black;
+            }
+            converter.setLEDStrip(colorArray);
+            textBox_messages.AppendText("LEDs are reseted\n");
+            textBox_messages.ScrollToCaret();
+
+        }
+
+        private void button_reconnectSerial_Click(object sender, EventArgs e)
+        {
+            if (comboBox_comPortList.SelectedItem != null)
+            {
+                converter.reconnectSerial(comboBox_comPortList.SelectedItem.ToString());
+            }
+            else
+            {
+                converter.reconnectSerial("Default");
+            }
+            setConnectionStatus(converter.getSerialOpenFlag());
+        }
+
+        private void button_getLogs_Click(object sender, EventArgs e)
+        {
+            string[] log_entries = logger.getLogs();
+            textBox_logger.Text = "";
+            foreach (string log_entry in log_entries)
+            {
+                textBox_logger.AppendText(log_entry + Environment.NewLine);
+                textBox_logger.ScrollToCaret();
+            }
+            textBox_logger.ScrollBars = ScrollBars.Vertical;
+            textBox_logger.ScrollToCaret();
+            
+        }
+
+        private void button_disconnectSerial_Click(object sender, EventArgs e)
+        {
+            converter.disconnectSerial();
+            setConnectionStatus(converter.getSerialOpenFlag());
+        }
+
+        private void numericUpDown_factorR_ValueChanged(object sender, EventArgs e)
+        {
+            converter.setFactor_red(Convert.ToDouble(numericUpDown_factorR.Value) / 100);
+        }
+
+        private void numericUpDown_factorG_ValueChanged(object sender, EventArgs e)
+        {
+            converter.setFactor_green(Convert.ToDouble(numericUpDown_factorG.Value) / 100);
+        }
+
+        private void numericUpDown_factorB_ValueChanged(object sender, EventArgs e)
+        {
+            converter.setFactor_blue(Convert.ToDouble(numericUpDown_factorB.Value) / 100);
         }
     }
 }

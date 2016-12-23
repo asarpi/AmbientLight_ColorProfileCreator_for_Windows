@@ -69,6 +69,7 @@
     <Compile Include="ColorAvgCalc_one_out.cs" />
     <Compile Include="ColorBoxes2LEDPixelsConverter.cs" />
     <Compile Include="ColorCapture.cs" />
+    <Compile Include="ConfigurationManagger.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

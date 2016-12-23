@@ -80,6 +80,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             associatedLEDs.top =    new Color[LED_indices.top_last    - LED_indices.top_first + 1];
             createAssociatedColorBoxesList();
 
+
+
         }
 
         /***** ABSTRACT FUNCTIONS ****/
@@ -139,14 +141,43 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             return ledColors;
         }
 
+        public void reconnectSerial(string comPort)
+        {
+            serial.ClosePort();
+            serial = new SerialInterface(comPort);
+        }
+
+        public void disconnectSerial()
+        {
+            serial.ClosePort();
+        }
+
+        public void setFactor_red(double fR)
+        {
+            serial.setFactor_red(fR);
+        }
+
+        public void setFactor_green(double fG)
+        {
+            serial.setFactor_green(fG);
+        }
+        public void setFactor_blue(double fB)
+        {
+            serial.setFactor_blue(fB);
+        }
+
 
         /*** PUBLIC GET AND DISPLAY METHODS ***/
-        
+
         public int getNumOfLeds()
         {
             return Convert.ToInt32(num_of_LEDs);
         }
 
+        public bool getSerialOpenFlag()
+        {
+            return serial.getOpenFlag();
+        }
         public Color[,] getColorMatrix()
         {
             return colorMatrix;

@@ -55,5 +55,17 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             Console.WriteLine("log created");
         }
 
+        public static string[] getLogs()
+        {
+            string[] entries = new string[Logger.Count()];
+            int entry_id = 0;
+            foreach(string log_entry in Logger)
+            {
+                entries[entry_id] = log_entry;
+                entry_id++;
+            }
+            return entries;
+        }
+
     }
 }

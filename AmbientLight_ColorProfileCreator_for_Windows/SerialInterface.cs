@@ -15,6 +15,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         private byte[] data = new byte[8];
         private byte[] msg;
         private bool isDeviceAvailable;
+        private double factorR, factorG, factorB = 1;
 
         public SerialInterface()
         {
@@ -36,6 +37,48 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 logger.add(LogTypes.SerialPort, "serial communication cannot be initialized, because of the lack of port");
             }
         }
+
+        public SerialInterface(string comPort)
+        {
+            logger.add(LogTypes.SerialPort, "initializing started");
+            isDeviceAvailable = false;
+            
+            serialPort = new SerialPort();
+
+            if (comPort == "Default")
+            {
+                serialPort.PortName = FindPerfectSerialPort();
+            }
+            else
+            {
+                string[] availablePorts = SerialPort.GetPortNames();
+                if (availablePorts.Contains(comPort))
+                {
+                    serialPort.PortName = comPort;
+                    logger.add(LogTypes.SerialPort, "manually selected port: " + comPort);
+                    isDeviceAvailable = true;
+                }
+                else
+                {
+                    serialPort.PortName = FindPerfectSerialPort();
+                }
+            }
+            serialPort.BaudRate = 19200;
+            serialPort.DataBits = 8;
+            serialPort.Parity = Parity.None;
+            serialPort.StopBits = StopBits.One;
+            if (isDeviceAvailable)
+            {
+                OpenPort();
+                logger.add(LogTypes.SerialPort, "serial port is initialized");
+            }
+            else
+            {
+                logger.add(LogTypes.SerialPort, "serial communication cannot be initialized, because of the lack of port");
+            }
+        }
+
+
         private string FindPerfectSerialPort()
         {
             string[] availablePorts = SerialPort.GetPortNames();
@@ -140,7 +183,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         /// </summary>
         /// <param name="value_b">original value</param>
         /// <returns>linearized value</returns>
-        private byte linearizator(byte value_b)
+        private byte linearizator(double value_b)
         {
             double value_f = Convert.ToDouble(value_b);
             value_f /= 255;
@@ -204,15 +247,15 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
                 data[0] = led_id;
                 
-                data[2] = linearizator(colorArray[led_id].R);
-                data[3] = linearizator(colorArray[led_id].G);
-                data[4] = linearizator(colorArray[led_id].B);
+                data[2] = linearizator(Convert.ToDouble(colorArray[led_id].R) * factorR);
+                data[3] = linearizator(Convert.ToDouble(colorArray[led_id].G) * factorG);
+                data[4] = linearizator(Convert.ToDouble(colorArray[led_id].B) * factorB);
                 if ((led_id + 1) < colorArray.GetLength(0))
                 {
                     data[1] = Convert.ToByte(led_id + 1);
-                    data[5] = linearizator(colorArray[led_id + 1].R);
-                    data[6] = linearizator(colorArray[led_id + 1].G);
-                    data[7] = linearizator(colorArray[led_id + 1].B);
+                    data[5] = linearizator(Convert.ToDouble(colorArray[led_id + 1].R) * factorR);
+                    data[6] = linearizator(Convert.ToDouble(colorArray[led_id + 1].G) * factorG);
+                    data[7] = linearizator(Convert.ToDouble(colorArray[led_id + 1].B) * factorB);
                 }
                 else
                 {
@@ -225,6 +268,30 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
             }
             return retVal;
+        }
+
+        public bool getOpenFlag()
+        {
+            return serialPort.IsOpen;
+        }
+        public void setFactors(double fR, double fG, double fB)
+        {
+            factorR = fR;
+            factorG = fG;
+            factorB = fB;
+        }
+
+        public void setFactor_red(double fR)
+        {
+            factorR = fR;
+        }
+        public void setFactor_green(double fG)
+        {
+            factorG = fG;
+        }
+        public void setFactor_blue(double fB)
+        {
+            factorB = fB;
         }
     }
 }
