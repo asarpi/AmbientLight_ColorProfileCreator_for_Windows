@@ -15,7 +15,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         private byte[] data = new byte[8];
         private byte[] msg;
         private bool isDeviceAvailable;
-        private double factorR, factorG, factorB = 1;
+        private double factorR = 1;
+        private double factorG = 1;
+        private double factorB = 1;
 
         public SerialInterface()
         {
@@ -23,7 +25,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             isDeviceAvailable = false;
             serialPort = new SerialPort();
             serialPort.PortName = FindPerfectSerialPort();
-            serialPort.BaudRate = 19200;
+            serialPort.BaudRate = 9600; // 19200;
             serialPort.DataBits = 8;
             serialPort.Parity = Parity.None;
             serialPort.StopBits = StopBits.One;

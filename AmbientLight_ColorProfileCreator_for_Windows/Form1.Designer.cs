@@ -54,15 +54,35 @@
             this.textBox_logger = new System.Windows.Forms.TextBox();
             this.button_getLogs = new System.Windows.Forms.Button();
             this.textBox_manualColor = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label_num_of_leds = new System.Windows.Forms.Label();
             this.numericUpDown_factorR = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_factorG = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_factorB = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pictureBox_monitor = new System.Windows.Forms.PictureBox();
+            this.numericUpDown_led_left_first = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_left_last = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_bottom_first = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_bottom_last = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_right_first = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_right_last = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_top_first = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_led_top_last = new System.Windows.Forms.NumericUpDown();
+            this.label_first_LED_id = new System.Windows.Forms.Label();
+            this.label_last_LED_id = new System.Windows.Forms.Label();
+            this.button_showBaseConfig = new System.Windows.Forms.Button();
+            this.button_configApply = new System.Windows.Forms.Button();
+            this.button_getDefault = new System.Windows.Forms.Button();
+            this.numericUpDown_num_of_leds = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_conf_vert_res = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_conf_hor_res = new System.Windows.Forms.NumericUpDown();
+            this.label_config_vert_res = new System.Windows.Forms.Label();
+            this.label_config_hor_res = new System.Windows.Forms.Label();
+            this.groupBox_screenConfig = new System.Windows.Forms.GroupBox();
+            this.groupBox_LEDconfig = new System.Windows.Forms.GroupBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_basicSetup.SuspendLayout();
             this.tabPage_manualControl.SuspendLayout();
@@ -73,6 +93,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_factorG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_factorB)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_monitor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_left_first)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_left_last)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_bottom_first)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_bottom_last)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_right_first)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_right_last)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_top_first)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_top_last)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_num_of_leds)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_conf_vert_res)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_conf_hor_res)).BeginInit();
+            this.groupBox_screenConfig.SuspendLayout();
+            this.groupBox_LEDconfig.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_startStreaming
@@ -145,9 +179,12 @@
             // 
             // tabPage_advancedSetup
             // 
+            this.tabPage_advancedSetup.Controls.Add(this.groupBox_LEDconfig);
+            this.tabPage_advancedSetup.Controls.Add(this.groupBox_screenConfig);
+            this.tabPage_advancedSetup.Controls.Add(this.button_showBaseConfig);
             this.tabPage_advancedSetup.Controls.Add(this.groupBox2);
-            this.tabPage_advancedSetup.Controls.Add(this.label7);
-            this.tabPage_advancedSetup.Controls.Add(this.textBox1);
+            this.tabPage_advancedSetup.Controls.Add(this.button_getDefault);
+            this.tabPage_advancedSetup.Controls.Add(this.button_configApply);
             this.tabPage_advancedSetup.Location = new System.Drawing.Point(4, 22);
             this.tabPage_advancedSetup.Name = "tabPage_advancedSetup";
             this.tabPage_advancedSetup.Size = new System.Drawing.Size(429, 537);
@@ -312,19 +349,10 @@
             this.textBox_manualColor.Size = new System.Drawing.Size(128, 21);
             this.textBox_manualColor.TabIndex = 2;
             // 
-            // textBox1
-            // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(208, 47);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(52, 20);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = ":(";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(34, 49);
+            this.label4.Location = new System.Drawing.Point(34, 36);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 13);
             this.label4.TabIndex = 4;
@@ -333,7 +361,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(34, 87);
+            this.label5.Location = new System.Drawing.Point(34, 62);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(45, 13);
             this.label5.TabIndex = 4;
@@ -342,24 +370,24 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(34, 123);
+            this.label6.Location = new System.Drawing.Point(34, 88);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(44, 13);
             this.label6.TabIndex = 4;
             this.label6.Text = "factor B";
             // 
-            // label7
+            // label_num_of_leds
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(104, 50);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(83, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "number of LEDs";
+            this.label_num_of_leds.AutoSize = true;
+            this.label_num_of_leds.Location = new System.Drawing.Point(107, 22);
+            this.label_num_of_leds.Name = "label_num_of_leds";
+            this.label_num_of_leds.Size = new System.Drawing.Size(83, 13);
+            this.label_num_of_leds.TabIndex = 4;
+            this.label_num_of_leds.Text = "number of LEDs";
             // 
             // numericUpDown_factorR
             // 
-            this.numericUpDown_factorR.Location = new System.Drawing.Point(117, 45);
+            this.numericUpDown_factorR.Location = new System.Drawing.Point(117, 32);
             this.numericUpDown_factorR.Name = "numericUpDown_factorR";
             this.numericUpDown_factorR.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.numericUpDown_factorR.Size = new System.Drawing.Size(43, 20);
@@ -373,7 +401,7 @@
             // 
             // numericUpDown_factorG
             // 
-            this.numericUpDown_factorG.Location = new System.Drawing.Point(117, 83);
+            this.numericUpDown_factorG.Location = new System.Drawing.Point(117, 58);
             this.numericUpDown_factorG.Name = "numericUpDown_factorG";
             this.numericUpDown_factorG.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.numericUpDown_factorG.Size = new System.Drawing.Size(43, 20);
@@ -387,7 +415,7 @@
             // 
             // numericUpDown_factorB
             // 
-            this.numericUpDown_factorB.Location = new System.Drawing.Point(117, 119);
+            this.numericUpDown_factorB.Location = new System.Drawing.Point(117, 84);
             this.numericUpDown_factorB.Name = "numericUpDown_factorB";
             this.numericUpDown_factorB.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.numericUpDown_factorB.Size = new System.Drawing.Size(43, 20);
@@ -407,18 +435,207 @@
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.numericUpDown_factorR);
             this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Location = new System.Drawing.Point(92, 107);
+            this.groupBox2.Location = new System.Drawing.Point(23, 32);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 179);
+            this.groupBox2.Size = new System.Drawing.Size(200, 116);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Color correction";
+            // 
+            // pictureBox_monitor
+            // 
+            this.pictureBox_monitor.Enabled = false;
+            this.pictureBox_monitor.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox_monitor.Image")));
+            this.pictureBox_monitor.Location = new System.Drawing.Point(94, 107);
+            this.pictureBox_monitor.Name = "pictureBox_monitor";
+            this.pictureBox_monitor.Size = new System.Drawing.Size(200, 147);
+            this.pictureBox_monitor.TabIndex = 7;
+            this.pictureBox_monitor.TabStop = false;
+            // 
+            // numericUpDown_led_left_first
+            // 
+            this.numericUpDown_led_left_first.Location = new System.Drawing.Point(41, 107);
+            this.numericUpDown_led_left_first.Name = "numericUpDown_led_left_first";
+            this.numericUpDown_led_left_first.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_left_first.TabIndex = 8;
+            this.numericUpDown_led_left_first.Visible = false;
+            // 
+            // numericUpDown_led_left_last
+            // 
+            this.numericUpDown_led_left_last.Location = new System.Drawing.Point(41, 204);
+            this.numericUpDown_led_left_last.Name = "numericUpDown_led_left_last";
+            this.numericUpDown_led_left_last.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_left_last.TabIndex = 8;
+            // 
+            // numericUpDown_led_bottom_first
+            // 
+            this.numericUpDown_led_bottom_first.Location = new System.Drawing.Point(94, 260);
+            this.numericUpDown_led_bottom_first.Name = "numericUpDown_led_bottom_first";
+            this.numericUpDown_led_bottom_first.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_bottom_first.TabIndex = 8;
+            // 
+            // numericUpDown_led_bottom_last
+            // 
+            this.numericUpDown_led_bottom_last.Location = new System.Drawing.Point(247, 260);
+            this.numericUpDown_led_bottom_last.Name = "numericUpDown_led_bottom_last";
+            this.numericUpDown_led_bottom_last.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_bottom_last.TabIndex = 8;
+            // 
+            // numericUpDown_led_right_first
+            // 
+            this.numericUpDown_led_right_first.Location = new System.Drawing.Point(300, 204);
+            this.numericUpDown_led_right_first.Name = "numericUpDown_led_right_first";
+            this.numericUpDown_led_right_first.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_right_first.TabIndex = 8;
+            // 
+            // numericUpDown_led_right_last
+            // 
+            this.numericUpDown_led_right_last.Location = new System.Drawing.Point(300, 107);
+            this.numericUpDown_led_right_last.Name = "numericUpDown_led_right_last";
+            this.numericUpDown_led_right_last.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_right_last.TabIndex = 8;
+            // 
+            // numericUpDown_led_top_first
+            // 
+            this.numericUpDown_led_top_first.Location = new System.Drawing.Point(247, 81);
+            this.numericUpDown_led_top_first.Name = "numericUpDown_led_top_first";
+            this.numericUpDown_led_top_first.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_top_first.TabIndex = 8;
+            // 
+            // numericUpDown_led_top_last
+            // 
+            this.numericUpDown_led_top_last.Location = new System.Drawing.Point(105, 81);
+            this.numericUpDown_led_top_last.Name = "numericUpDown_led_top_last";
+            this.numericUpDown_led_top_last.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDown_led_top_last.TabIndex = 8;
+            // 
+            // label_first_LED_id
+            // 
+            this.label_first_LED_id.AutoSize = true;
+            this.label_first_LED_id.Location = new System.Drawing.Point(30, 88);
+            this.label_first_LED_id.Name = "label_first_LED_id";
+            this.label_first_LED_id.Size = new System.Drawing.Size(58, 13);
+            this.label_first_LED_id.TabIndex = 4;
+            this.label_first_LED_id.Text = "first LED id";
+            // 
+            // label_last_LED_id
+            // 
+            this.label_last_LED_id.AutoSize = true;
+            this.label_last_LED_id.Location = new System.Drawing.Point(102, 65);
+            this.label_last_LED_id.Name = "label_last_LED_id";
+            this.label_last_LED_id.Size = new System.Drawing.Size(58, 13);
+            this.label_last_LED_id.TabIndex = 4;
+            this.label_last_LED_id.Text = "last LED id";
+            // 
+            // button_showBaseConfig
+            // 
+            this.button_showBaseConfig.Location = new System.Drawing.Point(256, 23);
+            this.button_showBaseConfig.Name = "button_showBaseConfig";
+            this.button_showBaseConfig.Size = new System.Drawing.Size(141, 23);
+            this.button_showBaseConfig.TabIndex = 9;
+            this.button_showBaseConfig.Text = "Show base configuration";
+            this.button_showBaseConfig.UseVisualStyleBackColor = true;
+            this.button_showBaseConfig.Click += new System.EventHandler(this.button_showLEDConfig_Click);
+            // 
+            // button_configApply
+            // 
+            this.button_configApply.Location = new System.Drawing.Point(117, 490);
+            this.button_configApply.Name = "button_configApply";
+            this.button_configApply.Size = new System.Drawing.Size(75, 23);
+            this.button_configApply.TabIndex = 10;
+            this.button_configApply.Text = "Apply";
+            this.button_configApply.UseVisualStyleBackColor = true;
+            this.button_configApply.Click += new System.EventHandler(this.button_configApply_Click);
+            // 
+            // button_getDefault
+            // 
+            this.button_getDefault.Location = new System.Drawing.Point(234, 490);
+            this.button_getDefault.Name = "button_getDefault";
+            this.button_getDefault.Size = new System.Drawing.Size(75, 23);
+            this.button_getDefault.TabIndex = 11;
+            this.button_getDefault.Text = "Get Default";
+            this.button_getDefault.UseVisualStyleBackColor = true;
+            this.button_getDefault.Click += new System.EventHandler(this.button_getDefault_Click);
+            // 
+            // numericUpDown_num_of_leds
+            // 
+            this.numericUpDown_num_of_leds.Location = new System.Drawing.Point(211, 18);
+            this.numericUpDown_num_of_leds.Name = "numericUpDown_num_of_leds";
+            this.numericUpDown_num_of_leds.Size = new System.Drawing.Size(52, 20);
+            this.numericUpDown_num_of_leds.TabIndex = 12;
+            // 
+            // numericUpDown_conf_vert_res
+            // 
+            this.numericUpDown_conf_vert_res.Location = new System.Drawing.Point(132, 30);
+            this.numericUpDown_conf_vert_res.Name = "numericUpDown_conf_vert_res";
+            this.numericUpDown_conf_vert_res.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDown_conf_vert_res.TabIndex = 14;
+            // 
+            // numericUpDown_conf_hor_res
+            // 
+            this.numericUpDown_conf_hor_res.Location = new System.Drawing.Point(132, 58);
+            this.numericUpDown_conf_hor_res.Name = "numericUpDown_conf_hor_res";
+            this.numericUpDown_conf_hor_res.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDown_conf_hor_res.TabIndex = 15;
+            // 
+            // label_config_vert_res
+            // 
+            this.label_config_vert_res.AutoSize = true;
+            this.label_config_vert_res.Location = new System.Drawing.Point(33, 34);
+            this.label_config_vert_res.Name = "label_config_vert_res";
+            this.label_config_vert_res.Size = new System.Drawing.Size(90, 13);
+            this.label_config_vert_res.TabIndex = 16;
+            this.label_config_vert_res.Text = "Vertical resolution";
+            // 
+            // label_config_hor_res
+            // 
+            this.label_config_hor_res.AutoSize = true;
+            this.label_config_hor_res.Location = new System.Drawing.Point(21, 62);
+            this.label_config_hor_res.Name = "label_config_hor_res";
+            this.label_config_hor_res.Size = new System.Drawing.Size(102, 13);
+            this.label_config_hor_res.TabIndex = 16;
+            this.label_config_hor_res.Text = "Horizontal resolution";
+            // 
+            // groupBox_screenConfig
+            // 
+            this.groupBox_screenConfig.Controls.Add(this.numericUpDown_conf_vert_res);
+            this.groupBox_screenConfig.Controls.Add(this.label_config_hor_res);
+            this.groupBox_screenConfig.Controls.Add(this.numericUpDown_conf_hor_res);
+            this.groupBox_screenConfig.Controls.Add(this.label_config_vert_res);
+            this.groupBox_screenConfig.Location = new System.Drawing.Point(229, 62);
+            this.groupBox_screenConfig.Name = "groupBox_screenConfig";
+            this.groupBox_screenConfig.Size = new System.Drawing.Size(190, 86);
+            this.groupBox_screenConfig.TabIndex = 17;
+            this.groupBox_screenConfig.TabStop = false;
+            this.groupBox_screenConfig.Text = "ScreenCapturer configuration";
+            // 
+            // groupBox_LEDconfig
+            // 
+            this.groupBox_LEDconfig.Controls.Add(this.pictureBox_monitor);
+            this.groupBox_LEDconfig.Controls.Add(this.label_num_of_leds);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_num_of_leds);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_left_first);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_left_last);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_bottom_first);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_bottom_last);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_top_last);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_right_first);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_top_first);
+            this.groupBox_LEDconfig.Controls.Add(this.numericUpDown_led_right_last);
+            this.groupBox_LEDconfig.Controls.Add(this.label_last_LED_id);
+            this.groupBox_LEDconfig.Controls.Add(this.label_first_LED_id);
+            this.groupBox_LEDconfig.Location = new System.Drawing.Point(23, 172);
+            this.groupBox_LEDconfig.Name = "groupBox_LEDconfig";
+            this.groupBox_LEDconfig.Size = new System.Drawing.Size(396, 291);
+            this.groupBox_LEDconfig.TabIndex = 18;
+            this.groupBox_LEDconfig.TabStop = false;
+            this.groupBox_LEDconfig.Text = "LED configuration";
             // 
             // AmbiLight
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1095, 754);
+            this.ClientSize = new System.Drawing.Size(460, 586);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AmbiLight";
@@ -430,7 +647,6 @@
             this.tabPage_manualControl.ResumeLayout(false);
             this.tabPage_manualControl.PerformLayout();
             this.tabPage_advancedSetup.ResumeLayout(false);
-            this.tabPage_advancedSetup.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPage_log.ResumeLayout(false);
@@ -440,6 +656,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_factorB)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_monitor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_left_first)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_left_last)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_bottom_first)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_bottom_last)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_right_first)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_right_last)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_top_first)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_led_top_last)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_num_of_leds)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_conf_vert_res)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_conf_hor_res)).EndInit();
+            this.groupBox_screenConfig.ResumeLayout(false);
+            this.groupBox_screenConfig.PerformLayout();
+            this.groupBox_LEDconfig.ResumeLayout(false);
+            this.groupBox_LEDconfig.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -473,13 +705,33 @@
         private System.Windows.Forms.TextBox textBox_manualColor;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label_num_of_leds;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown_factorB;
         private System.Windows.Forms.NumericUpDown numericUpDown_factorG;
         private System.Windows.Forms.NumericUpDown numericUpDown_factorR;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.PictureBox pictureBox_monitor;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_top_last;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_top_first;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_right_last;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_right_first;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_bottom_last;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_bottom_first;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_left_last;
+        private System.Windows.Forms.NumericUpDown numericUpDown_led_left_first;
+        private System.Windows.Forms.Button button_getDefault;
+        private System.Windows.Forms.Button button_configApply;
+        private System.Windows.Forms.Button button_showBaseConfig;
+        private System.Windows.Forms.Label label_last_LED_id;
+        private System.Windows.Forms.Label label_first_LED_id;
+        private System.Windows.Forms.NumericUpDown numericUpDown_num_of_leds;
+        private System.Windows.Forms.Label label_config_hor_res;
+        private System.Windows.Forms.Label label_config_vert_res;
+        private System.Windows.Forms.NumericUpDown numericUpDown_conf_hor_res;
+        private System.Windows.Forms.NumericUpDown numericUpDown_conf_vert_res;
+        private System.Windows.Forms.GroupBox groupBox_LEDconfig;
+        private System.Windows.Forms.GroupBox groupBox_screenConfig;
     }
 }
 

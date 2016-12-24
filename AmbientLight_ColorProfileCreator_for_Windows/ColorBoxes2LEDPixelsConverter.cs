@@ -30,7 +30,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     public abstract class ColorBoxes2LEDPixelsConverter
     {
         /***** VARIABLE DEFINITIONS *****/
-        protected byte num_of_LEDs = 30;
+        protected byte num_of_LEDs;
         protected AssociatedLED_indices LED_indices;
         protected Color[,] colorMatrix;
         protected int[] num_of_captured_boxes;

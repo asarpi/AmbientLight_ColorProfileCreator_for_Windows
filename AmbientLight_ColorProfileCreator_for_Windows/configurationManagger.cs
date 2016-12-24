@@ -20,6 +20,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         led_id_top_first = 6,
         led_id_top_last = 7,
         number_of_leds = 8,
+        screen_capt_vert_res = 9,
+        screen_capt_hor_res = 10,
     }
     public class ConfigurationManagger
     {
@@ -37,14 +39,22 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             configs.Add(ConfigTypes.led_id_top_first, 0);
             configs.Add(ConfigTypes.led_id_top_last, 0);
             configs.Add(ConfigTypes.number_of_leds, 0);
+            configs.Add(ConfigTypes.screen_capt_vert_res, 0);
+            configs.Add(ConfigTypes.screen_capt_hor_res, 0);
             
-            //saveConfig();
+            //saveConfig(); for first including a new config type
             loadConfig();
         }
 
         public void addConfigValue(ConfigTypes configtype, int value)
         {
-            configs.Add(configtype, value);
+            configs[configtype] = value;
+            saveConfig();
+        }
+
+        public void addConfigValue(ConfigTypes configtype, decimal value)
+        {
+            configs[configtype] =  Convert.ToInt32(value);
             saveConfig();
         }
 
@@ -58,6 +68,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             configs[ConfigTypes.led_id_right_last] = 16;
             configs[ConfigTypes.led_id_top_first] = 17;
             configs[ConfigTypes.led_id_top_last] = 29;
+            configs[ConfigTypes.screen_capt_vert_res] = 2;
+            configs[ConfigTypes.screen_capt_hor_res] = 5;
 
 
             configs[ConfigTypes.number_of_leds] = 30;
@@ -77,6 +89,11 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
             File.WriteAllLines("config.txt", configFileLines);
 
 
+        }
+
+        public int getConfig(ConfigTypes configurationType)
+        {
+            return configs[configurationType];
         }
 
         private void loadConfig()

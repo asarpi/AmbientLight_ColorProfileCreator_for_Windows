@@ -17,7 +17,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
     public partial class AmbiLight : Form
     {
         #region variable definitions
-        
+        ConfigurationManagger configuration;
+
         //ColorCapture colorCapture; //create an ColorCapture object
         public Graphics graphics; //grapichs object for drawing
         public ColorAvgCalc_1_simple avgCalculator;
@@ -28,7 +29,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
 
         public int num_of_boxes_vertical = 2;
         public int num_of_boxes_horizontal = 5;
-        private int number_of_leds = 30;
+        private int number_of_leds;
         CB2LP_converter_border_zoh_interpolation converter;
 
 
@@ -50,32 +51,97 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         private void Form1_Load(object sender, EventArgs e)
         {
             logger.begin();
-            ConfigurationManagger configs = new ConfigurationManagger();
+            configuration = new ConfigurationManagger();
+
+            // set displayed default values
             comboBox_comPortList.Items.Add("Default");
+            numericUpDown_num_of_leds.Value = configuration.getConfig(ConfigTypes.number_of_leds);
             
 
             graphics = this.CreateGraphics();
-            avgCalculator = new ColorAvgCalc_1_simple(num_of_boxes_vertical,num_of_boxes_horizontal);
+            
+
+
+            // DISPLAY DISSAPEARING SETUP IN ADVANCED SETUP TAB
+            numericUpDown_led_left_first.Visible = false;
+            numericUpDown_led_left_last.Visible = false;
+            numericUpDown_led_bottom_first.Visible = false;
+            numericUpDown_led_bottom_last.Visible = false;
+            numericUpDown_led_right_first.Visible = false;
+            numericUpDown_led_right_last.Visible = false;
+            numericUpDown_led_top_first.Visible = false;
+            numericUpDown_led_top_last.Visible = false;
+            numericUpDown_num_of_leds.Visible = false;
+            numericUpDown_conf_hor_res.Visible = false;
+            numericUpDown_conf_vert_res.Visible = false;
+            label_config_hor_res.Visible = false;
+            label_config_vert_res.Visible = false;
+            label_num_of_leds.Visible = false;
+            pictureBox_monitor.Visible = false;
+
+            label_first_LED_id.Visible = false;
+            label_last_LED_id.Visible = false;
+            flag_showLEDConfig_clicked = false;
+            button_configApply.Visible = false;
+            button_getDefault.Visible = false;
+            groupBox_LEDconfig.Visible = false;
+            groupBox_screenConfig.Visible = false;
+
+
+            numericUpDown_led_left_first.Value = configuration.getConfig(ConfigTypes.led_id_left_first);
+            numericUpDown_led_left_last.Value = configuration.getConfig(ConfigTypes.led_id_left_last);
+            numericUpDown_led_bottom_first.Value = configuration.getConfig(ConfigTypes.led_id_bottom_first);
+            numericUpDown_led_bottom_last.Value = configuration.getConfig(ConfigTypes.led_id_bottom_last);
+            numericUpDown_led_right_first.Value = configuration.getConfig(ConfigTypes.led_id_right_first);
+            numericUpDown_led_right_last.Value = configuration.getConfig(ConfigTypes.led_id_right_last);
+            numericUpDown_led_top_first.Value = configuration.getConfig(ConfigTypes.led_id_top_first);
+            numericUpDown_led_top_last.Value = configuration.getConfig(ConfigTypes.led_id_top_last);
+
+            numericUpDown_conf_vert_res.Value = configuration.getConfig(ConfigTypes.screen_capt_vert_res);
+            numericUpDown_conf_hor_res.Value = configuration.getConfig(ConfigTypes.screen_capt_hor_res);
+
+            initCore();
+            
+
+
+
+        }
+        /// <summary>
+        /// everything in this method is initialized with adjustable parameters and with this section the core of the ambilight
+        /// can be restarted. IMPORTANT: before you reinit the core, close the serial port (it requires a time, before it can be reopened)
+        /// </summary>
+        private void initCore()
+        {
+            number_of_leds = configuration.getConfig(ConfigTypes.number_of_leds);
+
+            avgCalculator = new ColorAvgCalc_1_simple(num_of_boxes_vertical, num_of_boxes_horizontal);
             //thread_fillingColorBox = new Thread(fillingOneColorBox); //initialization of thread
             thread_fillingColorBox = new Thread(fillingMoreColorBox); //initialization of thread
+
+
             AssociatedLED_indices indices = new AssociatedLED_indices();
-            indices.left_first = 0;
-            indices.left_last = 1;
-            indices.bottom_first = 2;
-            indices.bottom_last = 14;
-            indices.right_first = 15;
-            indices.right_last = 16;
-            indices.top_first = 17;
-            indices.top_last = 29;
-            converter = new CB2LP_converter_border_zoh_interpolation(30, indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
+            indices.left_first = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_left_first));
+            indices.left_last = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_left_last));
+            indices.bottom_first = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_bottom_first));
+            indices.bottom_last = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_bottom_last));
+            indices.right_first = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_right_first));
+            indices.right_last = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_right_last));
+            indices.top_first = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_top_first));
+            indices.top_last = Convert.ToByte(configuration.getConfig(ConfigTypes.led_id_top_last));
+
+            converter = new CB2LP_converter_border_zoh_interpolation(Convert.ToByte(number_of_leds), indices, new int[2] { num_of_boxes_vertical, num_of_boxes_horizontal });
             setConnectionStatus(converter.getSerialOpenFlag());
             textBox_board.Text = "Aruino Nano w ATmega 328";
 
-            
-            //configs.setDefaultValues();
-            //configs = new ConfigurationManagger();
-
-
+            //set maximum available values to LED config values
+            numericUpDown_led_left_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_left_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_last.Maximum = number_of_leds - 1;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -96,8 +162,8 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 }
             }
 
-            Color[] colorArray = new Color[30];
-            for (byte i = 0; i < 30; i++)
+            Color[] colorArray = new Color[number_of_leds];
+            for (byte i = 0; i < number_of_leds; i++)
             {
                 colorArray[i] = Color.Black;
             }
@@ -240,9 +306,9 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
                 textBox_messages.ScrollToCaret();
             }
             colorDialog1.ShowDialog();
-            Color[] colorArray = new Color[30];
+            Color[] colorArray = new Color[number_of_leds];
             Color desiredColor = colorDialog1.Color;
-            for (byte i = 0; i<30; i++)
+            for (byte i = 0; i<number_of_leds; i++)
             {
                 colorArray[i] = desiredColor;
             }
@@ -286,7 +352,7 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         {
             Color[] colorArray = new Color[number_of_leds];
 
-            for (byte i = 0; i < 30; i++)
+            for (byte i = 0; i < number_of_leds; i++)
             {
                 colorArray[i] = Color.Black;
             }
@@ -342,6 +408,175 @@ namespace AmbientLight_ColorProfileCreator_for_Windows
         private void numericUpDown_factorB_ValueChanged(object sender, EventArgs e)
         {
             converter.setFactor_blue(Convert.ToDouble(numericUpDown_factorB.Value) / 100);
+            
+        }
+
+        bool flag_showLEDConfig_clicked = false;
+        private void button_showLEDConfig_Click(object sender, EventArgs e)
+        {
+            if (!flag_showLEDConfig_clicked)
+            {
+                numericUpDown_led_left_first.Visible = true;
+                numericUpDown_led_left_last.Visible = true;
+                numericUpDown_led_bottom_first.Visible = true;
+                numericUpDown_led_bottom_last.Visible = true;
+                numericUpDown_led_right_first.Visible = true;
+                numericUpDown_led_right_last.Visible = true; 
+                numericUpDown_led_top_first.Visible = true;
+                numericUpDown_led_top_last.Visible = true;
+                numericUpDown_num_of_leds.Visible = true;
+                numericUpDown_conf_hor_res.Visible = true;
+                numericUpDown_conf_vert_res.Visible = true;
+                label_config_hor_res.Visible = true;
+                label_config_vert_res.Visible = true;
+                label_num_of_leds.Visible = true;
+                pictureBox_monitor.Visible = true;
+                flag_showLEDConfig_clicked = true;
+                label_first_LED_id.Visible = true;
+                label_last_LED_id.Visible = true;
+                button_configApply.Visible = true;
+                button_getDefault.Visible = true;
+                groupBox_LEDconfig.Visible = true;
+                groupBox_screenConfig.Visible = true;
+            }
+            else
+            {
+
+                numericUpDown_led_left_first.Visible = false;
+                numericUpDown_led_left_last.Visible = false;
+                numericUpDown_led_bottom_first.Visible = false;
+                numericUpDown_led_bottom_last.Visible = false;
+                numericUpDown_led_right_first.Visible = false;
+                numericUpDown_led_right_last.Visible = false;
+                numericUpDown_led_top_first.Visible = false;
+                numericUpDown_led_top_last.Visible = false;
+                numericUpDown_num_of_leds.Visible = false;
+                numericUpDown_conf_hor_res.Visible = false;
+                numericUpDown_conf_vert_res.Visible = false;
+                label_config_hor_res.Visible = false;
+                label_config_vert_res.Visible = false;
+                label_num_of_leds.Visible = false;
+                pictureBox_monitor.Visible = false;
+                flag_showLEDConfig_clicked = false;
+                label_first_LED_id.Visible = false;
+                label_last_LED_id.Visible = false;
+                button_configApply.Visible = false;
+                button_getDefault.Visible = false;
+                groupBox_LEDconfig.Visible = false;
+                groupBox_screenConfig.Visible = false;
+            }
+            
+        }
+
+        private void button_configApply_Click(object sender, EventArgs e)
+        {
+            //set maximum available values to LED config values
+            number_of_leds = Convert.ToInt32(numericUpDown_num_of_leds.Value);
+
+
+            numericUpDown_led_left_first.Maximum = number_of_leds-1;
+            numericUpDown_led_left_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_last.Maximum = number_of_leds - 1;
+
+            numericUpDown_led_left_first.Value = applyThresholdValue(numericUpDown_led_left_first.Value);
+            numericUpDown_led_left_last.Value = applyThresholdValue(numericUpDown_led_left_last.Value);
+            numericUpDown_led_bottom_first.Value = applyThresholdValue(numericUpDown_led_bottom_first.Value);
+            numericUpDown_led_bottom_last.Value = applyThresholdValue(numericUpDown_led_bottom_last.Value);
+            numericUpDown_led_right_first.Value = applyThresholdValue(numericUpDown_led_right_first.Value);
+            numericUpDown_led_right_last.Value = applyThresholdValue(numericUpDown_led_right_last.Value);
+            numericUpDown_led_top_first.Value = applyThresholdValue(numericUpDown_led_top_first.Value);
+            numericUpDown_led_top_last.Value = applyThresholdValue(numericUpDown_led_top_last.Value);
+
+
+            configuration.addConfigValue(ConfigTypes.led_id_left_first, numericUpDown_led_left_first.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_left_last, numericUpDown_led_left_last.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_bottom_first, numericUpDown_led_bottom_first.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_bottom_last, numericUpDown_led_bottom_last.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_right_first, numericUpDown_led_right_first.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_right_last, numericUpDown_led_right_last.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_top_first, numericUpDown_led_top_first.Value);
+            configuration.addConfigValue(ConfigTypes.led_id_top_last, numericUpDown_led_top_last.Value);
+            configuration.addConfigValue(ConfigTypes.number_of_leds, numericUpDown_num_of_leds.Value);
+
+            //screen config
+            configuration.addConfigValue(ConfigTypes.screen_capt_vert_res, numericUpDown_conf_vert_res.Value);
+            configuration.addConfigValue(ConfigTypes.screen_capt_hor_res, numericUpDown_conf_hor_res.Value);
+            
+
+            converter.disconnectSerial();
+            initCore();
+        }
+
+        private decimal applyThresholdValue(decimal value)
+        {
+            if (value > number_of_leds)
+            {
+                value = number_of_leds-1;
+            }
+            return value;
+        }
+
+        private void button_getDefault_Click(object sender, EventArgs e)
+        {
+            configuration.setDefaultValues();
+            number_of_leds = configuration.getConfig(ConfigTypes.number_of_leds);
+
+            numericUpDown_led_left_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_left_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_bottom_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_right_last.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_first.Maximum = number_of_leds - 1;
+            numericUpDown_led_top_last.Maximum = number_of_leds - 1;
+
+
+            numericUpDown_led_left_first.Value = configuration.getConfig(ConfigTypes.led_id_left_first);
+            numericUpDown_led_left_last.Value = configuration.getConfig(ConfigTypes.led_id_left_last);
+            numericUpDown_led_bottom_first.Value = configuration.getConfig(ConfigTypes.led_id_bottom_first);
+            numericUpDown_led_bottom_last.Value = configuration.getConfig(ConfigTypes.led_id_bottom_last);
+            numericUpDown_led_right_first.Value = configuration.getConfig(ConfigTypes.led_id_right_first);
+            numericUpDown_led_right_last.Value = configuration.getConfig(ConfigTypes.led_id_right_last);
+            numericUpDown_led_top_first.Value = configuration.getConfig(ConfigTypes.led_id_top_first);
+            numericUpDown_led_top_last.Value = configuration.getConfig(ConfigTypes.led_id_top_last);
+            numericUpDown_num_of_leds.Value = configuration.getConfig(ConfigTypes.number_of_leds);
+
+            //screen values
+            numericUpDown_conf_vert_res.Value = configuration.getConfig(ConfigTypes.screen_capt_vert_res);
+            numericUpDown_conf_hor_res.Value = configuration.getConfig(ConfigTypes.screen_capt_hor_res);
+        }
+
+        bool flag_button_show_ScreenCapturer_clicked = false;
+
+        private void button_show_ScreenCapturer_conf_Click(object sender, EventArgs e)
+        {
+            if (!flag_button_show_ScreenCapturer_clicked)
+            {
+                numericUpDown_conf_hor_res.Visible = true;
+                numericUpDown_conf_vert_res.Visible = true;
+                label_config_hor_res.Visible = true;
+                label_config_vert_res.Visible = true;
+                button_configApply.Visible = true;
+                button_getDefault.Visible = true;
+
+                flag_button_show_ScreenCapturer_clicked = true;
+            }
+            else
+            {
+                numericUpDown_conf_hor_res.Visible = false;
+                numericUpDown_conf_vert_res.Visible = false;
+                label_config_hor_res.Visible = false;
+                label_config_vert_res.Visible = false;
+                button_configApply.Visible = false;
+                button_getDefault.Visible = false;
+
+                flag_button_show_ScreenCapturer_clicked = false;
+            }
         }
     }
 }
